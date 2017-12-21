@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">binsdemo</string>
+    <string name="usertimeline_reposts">转发</string>
+    <string name="usertimeline_comments">评论</string>
+    <string name="usertimeline_attltudes">赞</string>
+    <string name="share">分享微博</string>
+</resources>
