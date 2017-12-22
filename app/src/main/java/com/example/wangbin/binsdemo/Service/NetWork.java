@@ -6,8 +6,6 @@ import com.example.wangbin.binsdemo.BuildConfig;
 import com.example.wangbin.binsdemo.Utils.LoggingInterceptor;
 import com.github.lisicnu.log4android.LogManager;
 
-import java.util.concurrent.TimeUnit;
-
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;

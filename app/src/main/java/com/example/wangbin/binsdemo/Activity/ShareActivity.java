@@ -76,6 +76,7 @@ public class ShareActivity extends AppCompatActivity implements View.OnClickList
         Map<String, String> map = new HashMap<>();
         map.put("access_token", AccessTokenKeeper.readAccessToken(ShareActivity.this).getToken());
         map.put("status", mEditText.getText().toString() + "        http://www.baidu.com");
+
         if(mFile == null) {
             shareModel.postShare(map, null,ShareActivity.this);
         }else {
@@ -116,7 +117,7 @@ public class ShareActivity extends AppCompatActivity implements View.OnClickList
                 .into(mImageView);
     }
 
-
+    //Uri转File
     public File UriToFile(Uri uri) {
         String res = null;
         String[] pojo = {MediaStore.Images.Media.DATA};
@@ -149,10 +150,5 @@ public class ShareActivity extends AppCompatActivity implements View.OnClickList
                 break;
         }
         return true;
-    }
-
-    @Override
-    public void startActivityForResult(Intent intent, int requestCode) {
-        super.startActivityForResult(intent, requestCode);
     }
 }

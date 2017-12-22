@@ -3,11 +3,7 @@ package com.example.wangbin.binsdemo.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.TaskStackBuilder;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,12 +11,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.example.wangbin.binsdemo.Adapter.RecyclerAdapter;
 import com.example.wangbin.binsdemo.Entity.Status;
-import com.example.wangbin.binsdemo.Model.ShareCallBack;
 import com.example.wangbin.binsdemo.Model.UserTimelineCallBack;
 import com.example.wangbin.binsdemo.Model.UserTimelineModel;
 import com.example.wangbin.binsdemo.R;
@@ -159,6 +152,7 @@ public class UserTimeLineActivity extends AppCompatActivity  implements UserTime
         return true;
     }
 
+    //分享之后刷新
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
