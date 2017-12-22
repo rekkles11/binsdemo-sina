@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,6 +24,7 @@ import com.example.wangbin.binsdemo.Model.ShareCallBack;
 import com.example.wangbin.binsdemo.Model.UserTimelineCallBack;
 import com.example.wangbin.binsdemo.Model.UserTimelineModel;
 import com.example.wangbin.binsdemo.R;
+import com.example.wangbin.binsdemo.Utils.EndLessOnScrollListener;
 import com.example.wangbin.binsdemo.Utils.WritePermission;
 import com.sina.weibo.sdk.auth.AccessTokenKeeper;
 
@@ -38,21 +40,21 @@ import java.util.Map;
 
 public class UserTimeLineActivity extends AppCompatActivity  implements UserTimelineCallBack{
     RecyclerView mRecyclerView;
-    RecyclerView.LayoutManager mLayoutManager;
+    LinearLayoutManager mLayoutManager;
     RecyclerAdapter mAdapter;
     ProgressBar mProgressBar;
+    Map<String, String> map;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_usertimeline);
         intView();
-        getUserTimeline();
+        getUserTimeline("1");
     }
 
-    public void getUserTimeline() {
-        Map<String, String> map = new HashMap<>();
-        map.put("access_token", AccessTokenKeeper.readAccessToken(this).getToken());
+    public void getUserTimeline(String page) {
+        map.put("page",page);
         UserTimelineTask userTimelineTask = new UserTimelineTask();
         WritePermission.verifystoragePermissons(this);
         try {
@@ -69,6 +71,11 @@ public class UserTimeLineActivity extends AppCompatActivity  implements UserTime
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_usertimeline);
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
+
+        map = new HashMap<>();
+        map.put("access_token", AccessTokenKeeper.readAccessToken(this).getToken());
+        map.put("page","1");
+        map.put("count","3");
     }
 
 
@@ -79,8 +86,18 @@ public class UserTimeLineActivity extends AppCompatActivity  implements UserTime
             int width = (int)getResources().getDisplayMetrics().widthPixels;
             mAdapter = new RecyclerAdapter(list,UserTimeLineActivity.this,width);
             mRecyclerView.setAdapter(mAdapter);
+            mRecyclerView.addOnScrollListener(new EndLessOnScrollListener(mLayoutManager) {
+                @Override
+                public void onLoadMore(int page) {
+                    map.put("count","2");
+                    getUserTimeline(String.valueOf(page));
+                    mAdapter.notifyDataSetChanged();
+
+                }
+            });
         }
     }
+
 
     private class UserTimelineTask extends AsyncTask<Map<String, String>, Integer, List<Status> > {
         public UserTimelineTask() {
@@ -147,7 +164,7 @@ public class UserTimeLineActivity extends AppCompatActivity  implements UserTime
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK){
             if (requestCode == 100){
-                getUserTimeline();
+                getUserTimeline("1");
             }
         }
     }

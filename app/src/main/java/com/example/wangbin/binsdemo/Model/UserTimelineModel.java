@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
+import android.widget.Toast;
 
 import com.example.wangbin.binsdemo.Entity.Status;
 import com.example.wangbin.binsdemo.Entity.UserTimelineReponse;
@@ -40,18 +41,19 @@ public class UserTimelineModel {
         userTimelineCall.enqueue(new Callback<UserTimelineReponse>() {
             @Override
             public void onResponse(Call<UserTimelineReponse> call, Response<UserTimelineReponse> response) {
-                mStatusList = response.body().getStatuses();
-                for(int i =0;i<mStatusList.size();i++){
-                    String source = mStatusList.get(i).getSource();
-                    source = "来自 "+source.substring(source.indexOf(">")+1,source.lastIndexOf("<"));
-                    mStatusList.get(i).setSource(source);
-                    mStatusList.get(i).setCreatedAt(getcreatedAt(mStatusList.get(i).getCreatedAt()));
+                if (response.code() == 200) {
+                    mStatusList = response.body().getStatuses();
+                    for (int i = 0; i < mStatusList.size(); i++) {
+                        String source = mStatusList.get(i).getSource();
+                        source = "来自 " + source.substring(source.indexOf(">") + 1, source.lastIndexOf("<"));
+                        mStatusList.get(i).setSource(source);
+                        mStatusList.get(i).setCreatedAt(getcreatedAt(mStatusList.get(i).getCreatedAt()));
+                    }
+                    saveToDB();
+                    callBack.getResult(mStatusList);
+
                 }
-                saveToDB();
-                callBack.getResult(mStatusList);
-
-
-                LogManager.d("getUserTimeline",response.body());
+                LogManager.d("getUserTimelineCode::::::",response.code());
             }
 
             @Override
