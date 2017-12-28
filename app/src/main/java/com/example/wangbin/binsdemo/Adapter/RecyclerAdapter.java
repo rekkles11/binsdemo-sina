@@ -1,20 +1,52 @@
 package com.example.wangbin.binsdemo.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
+import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.wangbin.binsdemo.Activity.ImageActivity;
 import com.example.wangbin.binsdemo.Entity.PicUrl;
 import com.example.wangbin.binsdemo.Entity.Status;
 import com.example.wangbin.binsdemo.R;
+import com.example.wangbin.binsdemo.Utils.GlideLoader;
+import com.example.wangbin.binsdemo.Utils.MyGridView;
+import com.example.wangbin.binsdemo.Utils.PicSize;
+import com.github.lisicnu.log4android.LogManager;
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.LoadControl;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.extractor.ExtractorsFactory;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.upstream.BandwidthMeter;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +59,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     List<Status> mList;
     Context mContext;
     int width;
+    SimpleExoPlayer player;
+    List<SimpleExoPlayer> mPlayers = new ArrayList<>();
 
     public RecyclerAdapter(List<Status> list, Context context,int x){
         this.mList = list;
@@ -34,6 +68,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         this.width = x;
     }
 
+    public  void setVideo(Boolean isPlay,int index){
+        mPlayers.get(index).setPlayWhenReady(isPlay);
+
+    }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -42,86 +80,79 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         return viewHolder;
     }
 
-
-
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Status status = mList.get(position);
-        holder.text.setText(status.getText());
+        if (status.getText().length()<=140)
+            holder.text.setText(status.getText().toString());
+        else {
+            SpannableStringBuilder spannable = new SpannableStringBuilder(
+                    status.getText().substring(0,139)+"...全文");
+            spannable.setSpan(new ForegroundColorSpan(Color.BLUE),139,144,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            holder.text.setText(spannable);
+            holder.text.setMovementMethod(LinkMovementMethod.getInstance());
+            spannable.setSpan(new TextClick(),0,4,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
         holder.reposts.setText(status.getRepostsCount().toString());
         holder.comments.setText(status.getCommentsCount().toString());
         holder.attltudes.setText(status.getAttitudesCount().toString());
         holder.createdAt.setText(status.getCreatedAt());
         holder.source.setText(status.getSource());
         holder.screenName.setText(status.getUser().getScreenName());
-        setImageView(holder.imageView,status.getUser().getAvatarLarge());
+        initPlayer(holder.mTextureView,position);
+        new GlideLoader().displayCircleImg(mContext,status.getUser().getAvatarLarge(),
+                width/5,width/5,holder.imageView);
         if(status.getPicUrls()!=null) {
             if (status.getPicUrls().size() == 1)
                 status.getPicUrls().get(0).setThumbnailPic(status.getOriginalPic());
-            setGridView(status.getPicUrls(), holder.gridView);
+            setGridView(new PicSize().getMiddlePicUrls(status.getPicUrls()), holder.gridView);
+            holder.gridView.setOnItemClickListener(new GridItemClickListener(holder.getLayoutPosition()) );
         }
 
     }
 
-    public void setGridView(List<PicUrl> picUrls,GridView view) {
-        GridView gridView = new GridView(mContext);
-        LinearLayout.LayoutParams layoutParams;
-        switch (picUrls.size()){
-            case 1:
-                layoutParams = new LinearLayout.LayoutParams(width/3*2-100,width/3*2-100);
-                view.setLayoutParams(layoutParams);
-                view.setNumColumns(1);
-                view.setAdapter(new GridAdapter(mContext,picUrls,width/3*2-100));
-                break;
-            case 2:
-            case 3:
-                layoutParams = new LinearLayout.LayoutParams(width,width/3);
-                view.setLayoutParams(layoutParams);
-                view.setNumColumns(3);
-                view.setAdapter(new GridAdapter(mContext,picUrls,width/3));
-                break;
-            case 4:
-                layoutParams = new LinearLayout.LayoutParams(width/3*2,width/3*2);
-                view.setLayoutParams(layoutParams);
-                view.setNumColumns(2);
-                view.setAdapter(new GridAdapter(mContext,picUrls,width/3));
-                break;
-            case 5:
-            case 6:
-                layoutParams = new LinearLayout.LayoutParams(width,width/3*2);
-                view.setLayoutParams(layoutParams);
-                view.setNumColumns(3);
-                view.setAdapter(new GridAdapter(mContext,picUrls,width/3));
-                break;
-            case 7:
-            case 8:
-            case 9:
-                layoutParams = new LinearLayout.LayoutParams(width,width);
-                view.setLayoutParams(layoutParams);
-                view.setNumColumns(3);
-                view.setAdapter(new GridAdapter(mContext,picUrls,width/3));
-                break;
-            default:
-                break;
-        }
+    private void initPlayer(TextureView textureView,int index) {
+        BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+        TrackSelection.Factory factory = new AdaptiveTrackSelection.Factory(bandwidthMeter);
+        TrackSelector trackSelector = new DefaultTrackSelector(factory);
+
+        LoadControl loadControl = new DefaultLoadControl();
+
+        mPlayers.add(ExoPlayerFactory.newSimpleInstance(mContext,trackSelector,loadControl));
+        mPlayers.get(index).setVideoTextureView(textureView);
+        playVideo(index);
 
     }
+    public void playVideo(int index){
+        DefaultBandwidthMeter defaultBandwidthMeter = new DefaultBandwidthMeter();
+        DataSource.Factory factory = new DefaultDataSourceFactory(mContext,
+                Util.getUserAgent(mContext,"userExoPlayer"),defaultBandwidthMeter);
+        ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
+        Uri playerUri = Uri.parse("https://storage.googleapis.com/android-tv/Sample%20videos/Demo%20Slam/Google%20Demo%20Slam_%20Hangin'%20with%20the%20Google%20Search%20Bar.mp4");
+        MediaSource videoSource = new ExtractorMediaSource(playerUri,factory,extractorsFactory,
+                null,null);
+        mPlayers.get(index).prepare(videoSource);
+        mPlayers.get(index).setPlayWhenReady(false);
+    }
+
+
+
+    public void setGridView(List<PicUrl> picUrls,MyGridView view) {
+        LogManager.d("picUrls1:::::",picUrls.size());
+        view.setColumn(picUrls.size(),width);
+        view.setAdapter(new GridAdapter(mContext,picUrls,view.getOneItemWidth(),false));
+
+
+    }
+
+
 
     @Override
     public int getItemCount() {
         return mList.size();
     }
 
-    public void setImageView(ImageView imageView,String url) {
-        Glide.with(mContext).load(url)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .placeholder(R.drawable.loading)
-                .error(R.drawable.error)
-                .thumbnail(0.1f)
-                .centerCrop()
-                .dontAnimate()
-                .into(imageView);
-    }
 
     public static class ViewHolder extends  RecyclerView.ViewHolder{
         public TextView text;
@@ -130,9 +161,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         public TextView attltudes;
         public TextView createdAt;
         public TextView source;
-        public GridView gridView;
+        public MyGridView gridView;
         public TextView screenName;
         public ImageView imageView;
+        public TextureView mTextureView;
         public ViewHolder(View itemView) {
             super(itemView);
             text = (TextView) itemView.findViewById(R.id.tv_text);
@@ -141,9 +173,48 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             attltudes = (TextView) itemView.findViewById(R.id.tv_attltudes);
             createdAt = (TextView) itemView.findViewById(R.id.tv_usertimeline_created_at);
             source = (TextView) itemView.findViewById(R.id.tv_usertimeline_source);
-            gridView = (GridView) itemView.findViewById(R.id.grid_usertimeline_pic_ids);
+            gridView = (MyGridView) itemView.findViewById(R.id.grid_usertimeline_pic_ids);
             screenName = (TextView) itemView.findViewById(R.id.tv_usertimeline_screen_name);
             imageView = (ImageView) itemView.findViewById(R.id.img_usertimeline_head);
+            mTextureView = (TextureView) itemView.findViewById(R.id.view_exoplayer);
         }
     }
+
+    private class TextClick extends ClickableSpan {
+        @Override
+        public void onClick(View widget) {
+            Toast.makeText(mContext,"不给看！",Toast.LENGTH_SHORT);
+            LogManager.d("text::","click");
+        }
+        @Override
+        public void updateDrawState(TextPaint ds) {
+            ds.setColor(Color.RED);
+            ds.setUnderlineText(true);
+        }
+    }
+
+    private class GridItemClickListener implements AdapterView.OnItemClickListener {
+
+
+        int mHodlerPostion;
+        public GridItemClickListener(int pos){
+            this.mHodlerPostion = pos;
+        }
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Intent intent = new Intent(mContext,ImageActivity.class);
+
+            List<PicUrl> list = new PicSize().getLaragePicUrls(mList.get(mHodlerPostion).getPicUrls());
+            String[] strings = new String[list.size()];
+            for (int i =0;i<list.size();i++){
+                strings[i] = list.get(i).getThumbnailPic();
+            }
+            intent.putExtra("pics",strings);
+            intent.putExtra("index",position);
+            LogManager.d("index:::",position);
+            mContext.startActivity(intent);
+        }
+    }
+
+
 }

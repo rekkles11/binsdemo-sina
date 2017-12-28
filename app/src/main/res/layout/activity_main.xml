@@ -4,7 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.example.wangbin.binsdemo.MainActivity">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
 
     <TextView
@@ -32,6 +37,13 @@
         android:text="微博列表" />
 
     <Button
+        android:id="@+id/btn_publictimeline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="热门微博" />
+
+    <Button
         android:id="@+id/bt_shareweibo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -44,5 +56,13 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="关注ID" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/bt_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Button" />
+
 
 </LinearLayout>

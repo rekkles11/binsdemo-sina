@@ -29,14 +29,18 @@ public interface Api {
     @GET("statuses/user_timeline.json")
     Call<UserTimelineReponse> getUserTimeline(@QueryMap Map<String,String> options);
 
+    @GET("statuses/public_timeline.json")
+    Call<UserTimelineReponse> getPublicTimeline(@QueryMap Map<String ,String> options);
+
     @GET("friendships/friends/ids.json")
     Observable<FriendsIds> getFriendsIds(@QueryMap Map<String,String> map);
 
     @POST("statuses/share.json")
     @Multipart
-    Call<Object> postShareImage(@Part("access_token") RequestBody token,@Part("status") RequestBody status ,@Part MultipartBody.Part file);
+    Call<Object> postShareImage(@Part("access_token") RequestBody token,@Part("status") RequestBody status ,@Part MultipartBody.Part[] file);
 
     @POST("statuses/share.json")
     @FormUrlEncoded
     Call<Object> postShareText(@FieldMap(encoded = true) Map<String,String> map);
+
 }

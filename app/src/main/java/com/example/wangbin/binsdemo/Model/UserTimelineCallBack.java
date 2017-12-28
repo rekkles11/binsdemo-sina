@@ -10,5 +10,5 @@ import java.util.List;
  */
 
 public interface UserTimelineCallBack {
-    public void getResult(List<Status> list);
+    public void getResult(List<Status> list,Boolean isSuccess);
 }

@@ -13,7 +13,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class OrderDBHelper extends SQLiteOpenHelper{
     public final static int mVersion = 1;
     public final static String mDbName = "binsdemo.db";
-    public final static String TABLE_NAME ="usertimeline";
+    public final static String TABLE_NAME ="weibodeta";
     public OrderDBHelper(Context context){
         super(context,mDbName,null,mVersion);
     }
@@ -21,23 +21,19 @@ public class OrderDBHelper extends SQLiteOpenHelper{
     public void onCreate(SQLiteDatabase db) {
 
         String sql = "create table if not exists "+ TABLE_NAME+"("+
-        "_id integer primary key autoincrement, "+ "statusdata text"+");";
-//        "createat text"+", "+
-//        "source text"+", "+
-//        "text text"+", "+
-//        "reposts integer"+", "+
-//        "comments integer"+", "+
-//        "attltudes integer"+");";
-
+        "Id integer primary key, "+ "json text, "+"types text"+");";
         db.execSQL(sql);
 
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        String sql =  "DROP TABLE IF EXISTS "+"TABLE_NAME";
-        db.execSQL(sql);
-        onCreate(db);
-
+        if(oldVersion ==1) {
+            String sql = "DROP TABLE IF EXISTS " + "TABLE_NAME";
+//            String sql = "create table if not exists "+ TABLE_NAME+"("+
+//                    "Id integer primary key, "+ "json text, "+"types text"+");";
+            db.execSQL(sql);
+            onCreate(db);
+        }
     }
 }

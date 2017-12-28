@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
 
 
     <application
@@ -27,6 +28,8 @@
         <activity android:name=".Activity.UserTimeLineActivity" ></activity>
         <activity android:name=".Activity.FriendsIdsActivity"></activity>
         <activity android:name=".Activity.ShareActivity"></activity>
+        <activity android:name=".Activity.PublicTimelineActivity"/>
+        <activity android:name=".Activity.ImageActivity"/>
 
     </application>
 

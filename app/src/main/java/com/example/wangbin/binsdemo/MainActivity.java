@@ -6,11 +6,16 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.example.wangbin.binsdemo.Activity.FriendsIdsActivity;
+import com.example.wangbin.binsdemo.Activity.ImageActivity;
+import com.example.wangbin.binsdemo.Activity.PublicTimelineActivity;
 import com.example.wangbin.binsdemo.Activity.ShareActivity;
 import com.example.wangbin.binsdemo.Activity.UserTimeLineActivity;
+import com.example.wangbin.binsdemo.Utils.TouchImageView;
 import com.example.wangbin.binsdemo.auth.Constants;
 import com.example.wangbin.binsdemo.auth.SelfWbAuthListener;
 import com.sina.weibo.sdk.WbSdk;
@@ -35,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void gotoActivity() {
         if (AccessTokenKeeper.readAccessToken(MainActivity.this).getToken()!=""){
-            startActivity(new Intent(MainActivity.this,UserTimeLineActivity.class));
+            startActivity(new Intent(MainActivity.this,ShareActivity.class));
         }else{
             starSsoAuthActivity();
         }
@@ -46,6 +51,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.btn_usertimeline).setOnClickListener(this);
         findViewById(R.id.bt_friendsids).setOnClickListener(this);
         findViewById(R.id.bt_shareweibo).setOnClickListener(this);
+        findViewById(R.id.btn_publictimeline).setOnClickListener(this);
+        findViewById(R.id.bt_image).setOnClickListener(this);
+
+
     }
 
     @Override
@@ -62,6 +71,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.bt_shareweibo:
                 startActivity(new Intent(MainActivity.this, ShareActivity.class));
+                break;
+            case R.id.btn_publictimeline:
+                startActivity(new Intent(MainActivity.this, PublicTimelineActivity.class));
+            case R.id.bt_image:
+                startActivity(new Intent(MainActivity.this, ImageActivity.class));
+            default:
                 break;
         }
     }
