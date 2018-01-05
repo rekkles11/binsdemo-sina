@@ -8,4 +8,35 @@
     <color name="colorGreen">#3cda38</color>
     <color name="colorRed">#ec0909</color>
     <color name="colorYellow">#ff8800</color>
+    <color name="skyblue">#00BFFF</color>
+
+    <color name="home_bottombar_bg">#FFFFFF</color><!--底部bar的背景样式-->
+    <color name="home_bottombar_font">#929292</color><!--底部bar字体颜色-->
+    <color name="home_weiboitem_content_keyword">#507daf</color><!--关键词的颜色-->
+
+    <color name="rl_textcolor">#111111</color>
+    <color name="searchHeadView_toolbar_bg">#E3E4E6</color><!--发现页的toolbar的收缩栏-->
+
+
+    <!-- 微博内容颜色-白天 -->
+    <color name="origin_nor_bg">#FFFFFF</color><!--微博的普通背景颜色-->
+    <color name="origin_highlight_bg">#ededed</color><!--微博的按压状态下的背景颜色-->
+    <color name="home_weiboitem_title_profile_name">#f46200</color><!--用户名称-->
+    <color name="home_weiboitem_title_profile_time">#828282</color><!--微博时间-->
+    <color name="home_weiboitem_title_weibocomefrom">#828282</color><!--微博来源-->
+    <color name="home_original_weiboitem_font">#333333</color><!--微博内容-->
+
+
+    <!--数字，包括评论，转发，点赞栏的颜色-白天 -->
+    <color name="detail_count_bg">#FFFFFF</color>
+    <color name="detail_normal_text">#828282</color>
+    <color name="detail_highlight_text">#000000</color>
+
+
+    <!--单条评论的颜色-白天 -->
+    <color name="comment_item_bg">#FFFFFF</color>
+    <color name="comment_item_name">#2f2f2f</color>
+    <color name="comment_item_comefrom">#808080</color>
+    <color name="comment_item_content">#808080</color>
+    <color name="comment_item_top_drive">#f2f2f2</color>
 </resources>

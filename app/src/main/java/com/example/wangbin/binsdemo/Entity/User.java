@@ -1,12 +1,15 @@
 
 package com.example.wangbin.binsdemo.Entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class User implements Serializable{
+public class User implements Serializable,Parcelable{
 
     @SerializedName("id")
     @Expose
@@ -170,6 +173,166 @@ public class User implements Serializable{
     @SerializedName("vclub_member")
     @Expose
     private Integer vclubMember;
+
+    protected User(Parcel in) {
+        if (in.readByte() == 0) {
+            id = null;
+        } else {
+            id = in.readLong();
+        }
+        idstr = in.readString();
+        if (in.readByte() == 0) {
+            _class = null;
+        } else {
+            _class = in.readInt();
+        }
+        screenName = in.readString();
+        name = in.readString();
+        province = in.readString();
+        city = in.readString();
+        location = in.readString();
+        description = in.readString();
+        url = in.readString();
+        profileImageUrl = in.readString();
+        coverImagePhone = in.readString();
+        profileUrl = in.readString();
+        domain = in.readString();
+        weihao = in.readString();
+        gender = in.readString();
+        if (in.readByte() == 0) {
+            followersCount = null;
+        } else {
+            followersCount = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            friendsCount = null;
+        } else {
+            friendsCount = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            pagefriendsCount = null;
+        } else {
+            pagefriendsCount = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            statusesCount = null;
+        } else {
+            statusesCount = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            favouritesCount = null;
+        } else {
+            favouritesCount = in.readInt();
+        }
+        createdAt = in.readString();
+        byte tmpFollowing = in.readByte();
+        following = tmpFollowing == 0 ? null : tmpFollowing == 1;
+        byte tmpAllowAllActMsg = in.readByte();
+        allowAllActMsg = tmpAllowAllActMsg == 0 ? null : tmpAllowAllActMsg == 1;
+        byte tmpGeoEnabled = in.readByte();
+        geoEnabled = tmpGeoEnabled == 0 ? null : tmpGeoEnabled == 1;
+        byte tmpVerified = in.readByte();
+        verified = tmpVerified == 0 ? null : tmpVerified == 1;
+        if (in.readByte() == 0) {
+            verifiedType = null;
+        } else {
+            verifiedType = in.readInt();
+        }
+        remark = in.readString();
+        if (in.readByte() == 0) {
+            ptype = null;
+        } else {
+            ptype = in.readInt();
+        }
+        byte tmpAllowAllComment = in.readByte();
+        allowAllComment = tmpAllowAllComment == 0 ? null : tmpAllowAllComment == 1;
+        avatarLarge = in.readString();
+        avatarHd = in.readString();
+        verifiedReason = in.readString();
+        verifiedTrade = in.readString();
+        verifiedReasonUrl = in.readString();
+        verifiedSource = in.readString();
+        verifiedSourceUrl = in.readString();
+        byte tmpFollowMe = in.readByte();
+        followMe = tmpFollowMe == 0 ? null : tmpFollowMe == 1;
+        byte tmpLike = in.readByte();
+        like = tmpLike == 0 ? null : tmpLike == 1;
+        byte tmpLikeMe = in.readByte();
+        likeMe = tmpLikeMe == 0 ? null : tmpLikeMe == 1;
+        if (in.readByte() == 0) {
+            onlineStatus = null;
+        } else {
+            onlineStatus = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            biFollowersCount = null;
+        } else {
+            biFollowersCount = in.readInt();
+        }
+        lang = in.readString();
+        if (in.readByte() == 0) {
+            star = null;
+        } else {
+            star = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            mbtype = null;
+        } else {
+            mbtype = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            mbrank = null;
+        } else {
+            mbrank = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            blockWord = null;
+        } else {
+            blockWord = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            blockApp = null;
+        } else {
+            blockApp = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            creditScore = null;
+        } else {
+            creditScore = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            userAbility = null;
+        } else {
+            userAbility = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            urank = null;
+        } else {
+            urank = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            storyReadState = null;
+        } else {
+            storyReadState = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            vclubMember = null;
+        } else {
+            vclubMember = in.readInt();
+        }
+    }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 
     public Long getId() {
         return id;
@@ -603,4 +766,170 @@ public class User implements Serializable{
         this.vclubMember = vclubMember;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        if (id == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeLong(id);
+        }
+        dest.writeString(idstr);
+        if (_class == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(_class);
+        }
+        dest.writeString(screenName);
+        dest.writeString(name);
+        dest.writeString(province);
+        dest.writeString(city);
+        dest.writeString(location);
+        dest.writeString(description);
+        dest.writeString(url);
+        dest.writeString(profileImageUrl);
+        dest.writeString(coverImagePhone);
+        dest.writeString(profileUrl);
+        dest.writeString(domain);
+        dest.writeString(weihao);
+        dest.writeString(gender);
+        if (followersCount == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(followersCount);
+        }
+        if (friendsCount == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(friendsCount);
+        }
+        if (pagefriendsCount == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(pagefriendsCount);
+        }
+        if (statusesCount == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(statusesCount);
+        }
+        if (favouritesCount == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(favouritesCount);
+        }
+        dest.writeString(createdAt);
+        dest.writeByte((byte) (following == null ? 0 : following ? 1 : 2));
+        dest.writeByte((byte) (allowAllActMsg == null ? 0 : allowAllActMsg ? 1 : 2));
+        dest.writeByte((byte) (geoEnabled == null ? 0 : geoEnabled ? 1 : 2));
+        dest.writeByte((byte) (verified == null ? 0 : verified ? 1 : 2));
+        if (verifiedType == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(verifiedType);
+        }
+        dest.writeString(remark);
+        if (ptype == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(ptype);
+        }
+        dest.writeByte((byte) (allowAllComment == null ? 0 : allowAllComment ? 1 : 2));
+        dest.writeString(avatarLarge);
+        dest.writeString(avatarHd);
+        dest.writeString(verifiedReason);
+        dest.writeString(verifiedTrade);
+        dest.writeString(verifiedReasonUrl);
+        dest.writeString(verifiedSource);
+        dest.writeString(verifiedSourceUrl);
+        dest.writeByte((byte) (followMe == null ? 0 : followMe ? 1 : 2));
+        dest.writeByte((byte) (like == null ? 0 : like ? 1 : 2));
+        dest.writeByte((byte) (likeMe == null ? 0 : likeMe ? 1 : 2));
+        if (onlineStatus == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(onlineStatus);
+        }
+        if (biFollowersCount == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(biFollowersCount);
+        }
+        dest.writeString(lang);
+        if (star == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(star);
+        }
+        if (mbtype == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(mbtype);
+        }
+        if (mbrank == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(mbrank);
+        }
+        if (blockWord == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(blockWord);
+        }
+        if (blockApp == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(blockApp);
+        }
+        if (creditScore == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(creditScore);
+        }
+        if (userAbility == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(userAbility);
+        }
+        if (urank == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(urank);
+        }
+        if (storyReadState == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(storyReadState);
+        }
+        if (vclubMember == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(vclubMember);
+        }
+    }
 }

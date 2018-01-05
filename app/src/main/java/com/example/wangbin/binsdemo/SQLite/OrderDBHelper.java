@@ -21,7 +21,7 @@ public class OrderDBHelper extends SQLiteOpenHelper{
     public void onCreate(SQLiteDatabase db) {
 
         String sql = "create table if not exists "+ TABLE_NAME+"("+
-        "Id integer primary key, "+ "json text, "+"types text"+");";
+        "Id integer primary key, "+ "json text, "+"types text,"+"weiboId text"+");";
         db.execSQL(sql);
 
     }

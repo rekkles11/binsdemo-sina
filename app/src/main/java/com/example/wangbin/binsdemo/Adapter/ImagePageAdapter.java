@@ -2,9 +2,7 @@ package com.example.wangbin.binsdemo.Adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.PointF;
 import android.support.v4.view.PagerAdapter;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -12,9 +10,7 @@ import android.widget.ImageView;
 import com.example.wangbin.binsdemo.Entity.PicUrl;
 import com.example.wangbin.binsdemo.R;
 import com.example.wangbin.binsdemo.Utils.GlideLoader;
-import com.example.wangbin.binsdemo.Utils.ImageLoader;
-import com.example.wangbin.binsdemo.Utils.MyTouchView;
-import com.example.wangbin.binsdemo.Utils.TouchImageView;
+import com.example.wangbin.binsdemo.Utils.ZoomImageView;
 
 import java.util.List;
 
@@ -24,14 +20,11 @@ import java.util.List;
 
 public class ImagePageAdapter extends PagerAdapter {
 
-    List<MyTouchView> mList;
+    List<ZoomImageView> mList;
     Context mContext;
     List<PicUrl> mPicUrls;
 
-    PointF mPointF;
-    PointF start;
-
-    public ImagePageAdapter(List<MyTouchView> mList, Context context,List<PicUrl> list){
+    public ImagePageAdapter(List<ZoomImageView> mList, Context context,List<PicUrl> list){
         this.mList = mList;
         mContext = context;
         mPicUrls = list;
@@ -39,14 +32,13 @@ public class ImagePageAdapter extends PagerAdapter {
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        ImageView imageView = (ImageView) object;
+        ZoomImageView imageView = (ZoomImageView) object;
         container.removeView(imageView);
     }
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        MyTouchView imageView = mList.get(position);
-//            new ImageLoader().displayImage(mContext, mPicUrls.get(position).getThumbnailPic(), imageView);
+        ZoomImageView imageView = mList.get(position);
             new GlideLoader().displayLargeImg(mContext,mPicUrls.get(position).getThumbnailPic(),imageView);
             container.addView(imageView);
             imageView.setOnClickListener(new View.OnClickListener() {

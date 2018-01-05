@@ -3,138 +3,185 @@
     xmlns:tool="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    tool:context=".MainActivity">
+    android:id="@+id/origin_weibo_layout"
+    android:orientation="vertical">
+
     <LinearLayout
+        android:id="@+id/layout_weibo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="10dp">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
             <ImageView
                 android:id="@+id/img_usertimeline_head"
                 android:layout_width="35dp"
                 android:layout_height="35dp" />
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
                 android:orientation="vertical">
+
                 <TextView
                     android:id="@+id/tv_usertimeline_screen_name"
-                    android:textStyle="bold"
-                    android:textSize="16dp"
-                    android:textColor="@color/black"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textSize="14dp"
+                    android:textStyle="bold" />
+
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
+
                     <TextView
                         android:id="@+id/tv_usertimeline_created_at"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:textSize="12dp" />
+
                     <TextView
                         android:id="@+id/tv_usertimeline_source"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:textSize="12dp" />
 
 
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
+
         <TextView
             android:id="@+id/tv_text"
-            android:layout_marginTop="0.5dp"
-            android:autoLink="web"
-            android:textStyle="bold"
-            android:textColor="@color/black"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="2dp"
+            android:autoLink="web"
+            android:textColor="@color/black"
+            android:textStyle="bold" />
+
         <com.example.wangbin.binsdemo.Utils.MyGridView
             android:id="@+id/grid_usertimeline_pic_ids"
-            android:visibility="gone"
-            android:orientation="horizontal"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" />
 
-        <TextureView
-            android:id="@+id/view_exoplayer"
-            android:visibility="visible"
-            android:layout_width="240dp"
-            android:layout_height="150dp"/>
+        <FrameLayout
+            android:id="@+id/fram_palyer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/black">
+
+            <TextureView
+                android:id="@+id/view_exoplayer"
+                android:layout_width="240dp"
+                android:layout_height="150dp" />
+
+            <ImageView
+                android:id="@+id/img_pause"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:src="@drawable/video_pause"
+                android:visibility="gone" />
+        </FrameLayout>
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/gray91">
-        </View>
+            android:layout_marginTop="10dp"
+            android:background="@color/gray91"></View>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:orientation="horizontal">
+
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1">-->
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center">
+
+
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:src="@drawable/reposts"/>
+                    android:src="@drawable/reposts" />
+
                 <TextView
                     android:id="@+id/tv_reposts"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/usertimeline_reposts"/>
+                    android:layout_marginLeft="4dp"
+                    android:text="@string/usertimeline_reposts" />
+
 
             </LinearLayout>
-
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center">
+
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:src="@drawable/comments"/>
+                    android:src="@drawable/comments" />
+
                 <TextView
                     android:id="@+id/tv_comments"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/usertimeline_comments"/>
-
+                    android:layout_marginLeft="4dp"
+                    android:text="@string/usertimeline_comments" />
             </LinearLayout>
+
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:layout_weight="1"
                 android:gravity="center">
+
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:src="@drawable/attltudes"/>
+                    android:src="@drawable/attltudes" />
+
                 <TextView
                     android:id="@+id/tv_attltudes"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/usertimeline_attltudes"/>
+                    android:layout_marginLeft="4dp"
+                    android:text="@string/usertimeline_attltudes" />
 
             </LinearLayout>
 
+
         </LinearLayout>
     </LinearLayout>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="10dp"
-        android:background="@color/gray91">
-    </View>
+        android:background="@color/gray91"></View>
 
 </LinearLayout>

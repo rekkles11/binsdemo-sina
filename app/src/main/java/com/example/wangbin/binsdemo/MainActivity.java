@@ -1,21 +1,15 @@
 package com.example.wangbin.binsdemo;
 
 import android.content.Intent;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.View;
 
 import com.example.wangbin.binsdemo.Activity.FriendsIdsActivity;
-import com.example.wangbin.binsdemo.Activity.ImageActivity;
 import com.example.wangbin.binsdemo.Activity.PublicTimelineActivity;
 import com.example.wangbin.binsdemo.Activity.ShareActivity;
+import com.example.wangbin.binsdemo.Activity.TestActivity;
 import com.example.wangbin.binsdemo.Activity.UserTimeLineActivity;
-import com.example.wangbin.binsdemo.Utils.TouchImageView;
 import com.example.wangbin.binsdemo.auth.Constants;
 import com.example.wangbin.binsdemo.auth.SelfWbAuthListener;
 import com.sina.weibo.sdk.WbSdk;
@@ -31,7 +25,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         com.github.lisicnu.log4android.LogManager.init(this);
-
         WbSdk.install(this,new AuthInfo(this, Constants.APP_KEY,Constants.REDIRECT_URL,""));
         initEvents();
         gotoActivity();
@@ -40,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void gotoActivity() {
         if (AccessTokenKeeper.readAccessToken(MainActivity.this).getToken()!=""){
-            startActivity(new Intent(MainActivity.this,ShareActivity.class));
+            startActivity(new Intent(MainActivity.this,UserTimeLineActivity.class));
         }else{
             starSsoAuthActivity();
         }
@@ -74,8 +67,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.btn_publictimeline:
                 startActivity(new Intent(MainActivity.this, PublicTimelineActivity.class));
+                break;
             case R.id.bt_image:
-                startActivity(new Intent(MainActivity.this, ImageActivity.class));
+                startActivity(new Intent(MainActivity.this, TestActivity.class));
+                break;
             default:
                 break;
         }
@@ -83,8 +78,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void starSsoAuthActivity(){
         mSsoHandler = new SsoHandler(this);
-
-        mSsoHandler.authorizeWeb(new SelfWbAuthListener(this));
+        mSsoHandler.authorizeWeb(new SelfWbAuthListener(this,new Intent(MainActivity.this,UserTimeLineActivity.class)));
 
     }
 

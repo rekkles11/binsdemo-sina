@@ -1,29 +1,34 @@
 package com.example.wangbin.binsdemo.Activity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.TextureView;
+import android.view.View;
+import android.widget.LinearLayout;
+
+import com.example.wangbin.binsdemo.Adapter.HeaderAndFooterWrapper;
 import com.example.wangbin.binsdemo.Adapter.RecyclerAdapter;
 import com.example.wangbin.binsdemo.Entity.Status;
 import com.example.wangbin.binsdemo.Model.UserTimelineCallBack;
 import com.example.wangbin.binsdemo.Model.UserTimelineModel;
 import com.example.wangbin.binsdemo.R;
 import com.example.wangbin.binsdemo.Utils.EndLessOnScrollListener;
+import com.example.wangbin.binsdemo.Utils.ExoPlayerInstance;
 import com.example.wangbin.binsdemo.Utils.VideoCallBack;
 import com.example.wangbin.binsdemo.Utils.WritePermission;
 import com.github.lisicnu.log4android.LogManager;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.sina.weibo.sdk.auth.AccessTokenKeeper;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -38,11 +43,14 @@ public class UserTimeLineActivity extends AppCompatActivity  implements UserTime
     RecyclerView mRecyclerView;
     LinearLayoutManager mLayoutManager;
     RecyclerAdapter mAdapter;
+    HeaderAndFooterWrapper mWrapper;
     Map<String, String> map;
     List<Status> mList;
     Boolean isFirst = true;
     int mAddNum=0;
     SwipeRefreshLayout mSwipeRefreshLayout;
+    View mHeaderView;
+    int playPostion =0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -66,6 +74,7 @@ public class UserTimeLineActivity extends AppCompatActivity  implements UserTime
     }
 
     public void intView() {
+        mHeaderView = LayoutInflater.from(this).inflate(R.layout.header_item,null);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.layout_swipe_refresh);
         mSwipeRefreshLayout.setOnRefreshListener(new RefreshListener());
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_usertimeline);
@@ -81,75 +90,55 @@ public class UserTimeLineActivity extends AppCompatActivity  implements UserTime
 
     @Override
     public void getResult(List<Status> list,Boolean isSuccess) {
-
         if (isFirst){
             if (list!=null) {
                 mList = (list);
-                LogManager.d("list::::",list.size());
+                LogManager.d("list::::1",list.size());
                 int width = (int) getResources().getDisplayMetrics().widthPixels;
                 mAdapter = new RecyclerAdapter(mList, UserTimeLineActivity.this, width);
-                mRecyclerView.setAdapter(mAdapter);
+                mWrapper = new HeaderAndFooterWrapper(mAdapter);
+                mRecyclerView.setAdapter(mWrapper);
                 isFirst = false;
+                mSwipeRefreshLayout.setRefreshing(false);
             }
         }else {
-            if (isSuccess&&list!=null) {
+            if (list!=null) {
                 mAddNum = list.size();
-                    mList.addAll(list);
-                    LogManager.d("slist::::", list.size() + "+" + mList.size());
-                    mAdapter.notifyItemRangeInserted(mAddNum, list.size());
+                mList.addAll(list);
+                LogManager.d("slist::::", list.size() + "+" + mList.size());
+                mWrapper.notifyItemRangeInserted(mList.size()-list.size(), list.size());
             }
 
         }
-//        if(mList!=null) {
-//            if (list !=null)
-//                mList.addAll(list);
-//        }else{
-//            if (list!=null)
-//                mList = list;
-//        }
-//        if (mList!=null){
-//            if (isFirst) {
-//                int width = (int) getResources().getDisplayMetrics().widthPixels;
-//                mAdapter = new RecyclerAdapter(mList, UserTimeLineActivity.this, width);
-//                mRecyclerView.setAdapter(mAdapter);
-//                isFirst = false;
-//            }else {
-//                LogManager.d("size:::::",mList.size()+"+"+list.size());
-//                if (list!=null)
-//                    mAdapter.notifyItemRangeInserted(mList.size()-list.size()+1,list.size());
-//            }
-//        }
 
     }
 
     public EndLessOnScrollListener mEndLessOnScrollListener =
-            new EndLessOnScrollListener(mLayoutManager,UserTimeLineActivity.this,UserTimeLineActivity.this) {
+            new EndLessOnScrollListener(playPostion,mLayoutManager,UserTimeLineActivity.this,UserTimeLineActivity.this) {
         @Override
         public void onLoadMore() {
-
+            LogManager.d("load:::::1",mWrapper.mInnerAdapter.getItemCount());
             getUserTimeline("1");
-            LogManager.d("addNum:::",mAddNum);
-            mRecyclerView.scrollToPosition(mList.size()-mAddNum);
+//            mWrapper.notifyDataSetChanged();
             mAddNum=0;
         }
 
 
     };
 
-    /**
-     * 播放本地视频
-     */
-
-    private String getLocalVideoPath(String name) {
-        String sdCard = Environment.getExternalStorageDirectory().getPath();
-        String uri = sdCard + File.separator + name;
-        return uri;
-    }
 
     @Override
-    public void isPlay(Boolean bool,int postion) {
-        mAdapter.setVideo(bool,postion);
-
+    public void isPlay(int postion) {
+        this.playPostion = postion;
+        LogManager.d("explayer::",postion);
+        if(mList.get(postion).getPicUrls().size()==0){
+            View view = mLayoutManager.findViewByPosition(postion);
+            LinearLayout layout = (LinearLayout) view;
+            TextureView textureView = (TextureView) layout.findViewById(R.id.view_exoplayer);
+            ExoPlayerInstance.getInstance().getPlayer(UserTimeLineActivity.this);
+            Uri playerUri = Uri.parse("https://storage.googleapis.com/android-tv/Sample%20videos/Demo%20Slam/Google%20Demo%20Slam_%20Hangin'%20with%20the%20Google%20Search%20Bar.mp4");
+            ExoPlayerInstance.getInstance().setmExoPlayer(playerUri, textureView, true, UserTimeLineActivity.this);
+        }
     }
 
 
@@ -208,8 +197,9 @@ public class UserTimeLineActivity extends AppCompatActivity  implements UserTime
 
         @Override
         public void onRefresh() {
-            mAdapter.notifyDataSetChanged();
-            mSwipeRefreshLayout.setRefreshing(false);
+            isFirst = true;
+            getUserTimeline("1");
+
 
         }
     }

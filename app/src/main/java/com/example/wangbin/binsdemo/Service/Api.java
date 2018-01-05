@@ -1,7 +1,9 @@
 package com.example.wangbin.binsdemo.Service;
 
 
+import com.example.wangbin.binsdemo.Entity.Comment;
 import com.example.wangbin.binsdemo.Entity.FriendsIds;
+import com.example.wangbin.binsdemo.Entity.User;
 import com.example.wangbin.binsdemo.Entity.UserTimelineReponse;
 
 import java.util.Map;
@@ -42,5 +44,11 @@ public interface Api {
     @POST("statuses/share.json")
     @FormUrlEncoded
     Call<Object> postShareText(@FieldMap(encoded = true) Map<String,String> map);
+
+    @GET("users/show.json")
+    Call<User> getUserId(@QueryMap Map<String,String> options);
+
+    @GET("comments/show.json")
+    Call<Comment> getComments(@QueryMap Map<String,String> options);
 
 }

@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 
 import com.example.wangbin.binsdemo.Entity.Status;
+import com.example.wangbin.binsdemo.Entity.User;
 import com.example.wangbin.binsdemo.Entity.UserTimelineReponse;
 import com.example.wangbin.binsdemo.SQLite.OrderDBHelper;
 import com.example.wangbin.binsdemo.SQLite.OrderDao;
@@ -34,7 +35,7 @@ public class UserTimelineModel {
         this.mContext = context;
     }
 
-    public void getStatus(Map<String, String> map, final UserTimelineCallBack callBack,String apiStr) throws IOException {
+    public void getStatus(Map<String, String> map, final UserTimelineCallBack callBack, final String apiStr) throws IOException {
         this.apiStr = apiStr;
         Api api = NetWork.getInstance().getApi();
         Call<UserTimelineReponse> userTimelineCall = null;
@@ -59,18 +60,25 @@ public class UserTimelineModel {
                     bool = true;
 
                 }else {
-                    mStatusList = new OrderDao(mContext).getAllData();
+                    mStatusList = new OrderDao(mContext).getAllData(apiStr);
                     bool = false;
                 }
-                callBack.getResult(mStatusList,bool);
-                LogManager.d("getUserTimelineCode::::::",response.code());
+                if (mStatusList!=null) {
+                    LogManager.d("getUserTimelineCode::::::", response.code() + "+" + mStatusList.size());
+                    callBack.getResult(mStatusList, bool);
+                }else {
+                    getTextData();
+                    callBack.getResult(mStatusList, bool);
+                }
             }
 
             @Override
             public void onFailure(Call<UserTimelineReponse> call, Throwable t) {
                 LogManager.d("getUserTimeline",t.getMessage());
-                mStatusList = new OrderDao(mContext).getAllData();
-                callBack.getResult(mStatusList,false);
+                if (mStatusList!=null) {
+                    mStatusList = new OrderDao(mContext).getAllData(apiStr);
+                    callBack.getResult(mStatusList, false);
+                }
 
             }
         });
@@ -96,18 +104,16 @@ public class UserTimelineModel {
 
     public  void getTextData(){
 
-        mStatusList = new OrderDao(mContext).getAllData();
-//                    mStatusList= getReponse().getStatuses();
-//        if (mStatusList!=null) {
-//                        for (int i = 0; i < mStatusList.size(); i++) {
-//                            String source = mStatusList.get(i).getSource();
-//                        source = "来自 " + source.substring(source.indexOf(">") + 1, source.lastIndexOf("<"));
-//                            mStatusList.get(i).setSource(source);
-//                        mStatusList.get(i).setCreatedAt(getcreatedAt(mStatusList.get(i).getCreatedAt()));
-//                        }
-//            saveToDB();
-
-//        }
+        mStatusList = new OrderDao(mContext).getAllData(apiStr);
+                    mStatusList= getReponse().getStatuses();
+        if (mStatusList!=null) {
+                        for (int i = 0; i < mStatusList.size(); i++) {
+                            String source = mStatusList.get(i).getSource();
+                        source = "来自 " + source.substring(source.indexOf(">") + 1, source.lastIndexOf("<"));
+                            mStatusList.get(i).setSource(source);
+                        mStatusList.get(i).setCreatedAt(getcreatedAt(mStatusList.get(i).getCreatedAt()));
+                        }
+        }
 
 
     }

@@ -18,19 +18,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".Activity.WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activity.UserTimeLineActivity" ></activity>
-        <activity android:name=".Activity.FriendsIdsActivity"></activity>
-        <activity android:name=".Activity.ShareActivity"></activity>
+        <activity android:name=".Activity.UserTimeLineActivity" />
+        <activity android:name=".Activity.FriendsIdsActivity"/>/
+        <activity android:name=".Activity.ShareActivity"/>
         <activity android:name=".Activity.PublicTimelineActivity"/>
         <activity android:name=".Activity.ImageActivity"/>
-
+        <activity android:name=".Activity.TestActivity"/>
+        <activity android:name=".Activity.HomeActivity"/>
+        <activity android:name=".Activity.WeiboDataActivity"/>
     </application>
 
 

@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
-import retrofit2.http.POST;
 
 /**
  * Created by momo on 2017/12/28.
@@ -19,7 +18,7 @@ public class HeaderAndFooterWrapper extends RecyclerView.Adapter<RecyclerView.Vi
     private SparseArrayCompat<View> mHeaderViews = new SparseArrayCompat<>();
     private SparseArrayCompat<View> mFootViews = new SparseArrayCompat<>();
 
-    private RecyclerView.Adapter mInnerAdapter;
+    public RecyclerView.Adapter mInnerAdapter;
 
     public HeaderAndFooterWrapper(RecyclerView.Adapter adapter){
         mInnerAdapter = adapter;
@@ -35,6 +34,9 @@ public class HeaderAndFooterWrapper extends RecyclerView.Adapter<RecyclerView.Vi
 
     public void addHeaderView(View view){
         mHeaderViews.put(mHeaderViews.size()+BASE_ITEM_TYPE_HEADER,view);
+    }
+    public void deleteHeaderView(){
+        mHeaderViews.clear();
     }
 
     public void addFooterView(View view){

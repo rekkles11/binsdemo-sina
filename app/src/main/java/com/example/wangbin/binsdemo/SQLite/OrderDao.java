@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.example.wangbin.binsdemo.Entity.Status;
+import com.example.wangbin.binsdemo.Entity.User;
 import com.example.wangbin.binsdemo.Utils.GsonConverter;
 import com.github.lisicnu.log4android.LogManager;
 
@@ -17,7 +18,7 @@ import java.util.List;
 
 public class OrderDao extends BaseDao{
     private static final String TAG = "orderDao";
-    private final String[] ORDER_COLUMNS = new String[]{"Id","json","types"};
+    private final String[] ORDER_COLUMNS = new String[]{"Id","json","types","weiboId"};
     public OrderDao(Context context){
         super(new OrderDBHelper(context));
     }
@@ -50,10 +51,10 @@ public class OrderDao extends BaseDao{
     }
 
 
-    public List<Status> getAllData(){
+    public List<Status> getAllData(String types){
         List<Status> list = null;
         begintTransByRead();
-        mCursor = db.query(OrderDBHelper.TABLE_NAME,ORDER_COLUMNS,null,null,null,null,null);
+        mCursor = db.query(OrderDBHelper.TABLE_NAME,ORDER_COLUMNS,"types = ?",new String[]{types},null,null,null);
         if(mCursor.getCount()>0){
             list = new ArrayList<>();
             int count = mCursor.getCount();
@@ -69,6 +70,45 @@ public class OrderDao extends BaseDao{
         closeCursor();
         commit();
         return list;
+    }
+    public <T> List<T> getCommets(String weiboId,String type, Class<T> cla){
+        List<T> list = new ArrayList<>();
+        begintTransByRead();
+        mCursor = db.query(OrderDBHelper.TABLE_NAME,ORDER_COLUMNS,"types = ? AND weiboId =?",new String[]{type,weiboId},null,null,null);
+        if(mCursor.getCount()>0){
+            int count = mCursor.getCount();
+            GsonConverter gsonConverter = new GsonConverter<Status>();
+            while (mCursor.moveToNext()){
+                String str = mCursor.getString(mCursor.getColumnIndex("json"));
+                list.add( gsonConverter.getObject(str,cla));
+            }
+            LogManager.d("successful",count);
+        }else {
+            LogManager.d("error","error");
+        }
+        closeCursor();
+        commit();
+
+        return list;
+    }
+    public User getUserData(String type){
+        User user = null;
+        begintTransByRead();
+        mCursor = db.query(OrderDBHelper.TABLE_NAME,ORDER_COLUMNS,"types = ?",new String[]{type},null,null,null);
+        if(mCursor.getCount()>0){
+            int count = mCursor.getCount();
+            GsonConverter gsonConverter = new GsonConverter<Status>();
+            while (mCursor.moveToNext()){
+                String str = mCursor.getString(mCursor.getColumnIndex("json"));
+                user = gsonConverter.getObject(str,User.class);
+            }
+            LogManager.d("successful",count);
+        }else {
+            LogManager.d("error","error");
+        }
+        closeCursor();
+        commit();
+        return user;
     }
     public Boolean idIsExist(String id){
         begintTransByRead();

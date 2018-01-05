@@ -1,20 +1,15 @@
 package com.example.wangbin.binsdemo.Adapter;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
-import com.example.wangbin.binsdemo.Activity.ImageActivity;
 import com.example.wangbin.binsdemo.Entity.PicUrl;
 import com.example.wangbin.binsdemo.R;
 import com.example.wangbin.binsdemo.Utils.GlideLoader;
-import com.example.wangbin.binsdemo.Utils.PicSize;
 import com.github.lisicnu.log4android.LogManager;
 
 import java.util.List;
@@ -28,7 +23,6 @@ public class GridAdapter extends BaseAdapter{
     private List<PicUrl> mList;
     private int height;
     Boolean isShare;
-    int mPostion;
     public GridAdapter( Context context,  List<PicUrl> mList,int height,Boolean isShare) {
         this.mContext =  context;
         this.mList = mList;
@@ -40,7 +34,10 @@ public class GridAdapter extends BaseAdapter{
 
     @Override
     public int getCount() {
-        return mList.size()+1;
+        if (isShare)
+            return mList.size()+1;
+        else
+            return mList.size();
     }
 
     @Override
@@ -69,19 +66,16 @@ public class GridAdapter extends BaseAdapter{
             viewHolder= (ViewHolder) view.getTag();
         }
             if (position<mList.size()) {
-                LogManager.d("1isShare::",position+"+"+mList.size());
-                new GlideLoader().displayImg(mContext, mList.get(position).getThumbnailPic(),
+                new GlideLoader().displayNormalImg(mContext, mList.get(position).getThumbnailPic(),
                         height, height, viewHolder.imageView);
                 if (isShare){
                     viewHolder.deleteImg.setVisibility(View.VISIBLE);
-                    LogManager.d("in11dex:::",position);
-                    mPostion = position;
-                    viewHolder.deleteImg.setOnClickListener(new DeleteClickListener());
+                    viewHolder.deleteImg.setOnClickListener(new DeleteClickListener(position));
                 }
             }else if(mList.size() == position&&mList.size()>0){
                 if(isShare) {
-                    LogManager.d("isShare::",position+"+"+mList.size());
-                    viewHolder.imageView.setImageResource(R.drawable.more_img);
+                    new GlideLoader().displayNormalImg(mContext,R.drawable.more_img,
+                            height, height, viewHolder.imageView);
                     viewHolder.deleteImg.setVisibility(View.GONE);
                 }
             }
@@ -95,10 +89,14 @@ public class GridAdapter extends BaseAdapter{
 
 
     private class DeleteClickListener implements View.OnClickListener{
+        int pos;
+        DeleteClickListener(int pos){
+            this.pos = pos;
+        }
 
         @Override
         public void onClick(View v) {
-            mList.remove(mPostion);
+            mList.remove(pos);
             notifyDataSetChanged();
 
         }

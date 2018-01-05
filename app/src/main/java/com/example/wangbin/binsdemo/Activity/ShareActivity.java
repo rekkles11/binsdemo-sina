@@ -22,7 +22,8 @@ import com.example.wangbin.binsdemo.Entity.PicUrl;
 import com.example.wangbin.binsdemo.Model.ShareCallBack;
 import com.example.wangbin.binsdemo.Model.ShareModel;
 import com.example.wangbin.binsdemo.R;
-import com.example.wangbin.binsdemo.Utils.ImageLoader;
+import com.example.wangbin.binsdemo.Utils.GlideLoader;
+import com.github.lisicnu.log4android.LogManager;
 import com.sina.weibo.sdk.auth.AccessTokenKeeper;
 import com.yancy.imageselector.ImageConfig;
 import com.yancy.imageselector.ImageSelector;
@@ -57,7 +58,6 @@ public class ShareActivity extends AppCompatActivity implements ShareCallBack {
 
     private void initView() {
         mEditText = (EditText) findViewById(R.id.edit_share);
-//        findViewById(R.id.bt_share).setOnClickListener(this);
         mGridView = ((GridView) findViewById(R.id.grid_pick));
         int width = (int) getResources().getDisplayMetrics().widthPixels;
          LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(width,width);
@@ -76,20 +76,8 @@ public class ShareActivity extends AppCompatActivity implements ShareCallBack {
 
     }
 
-//    @Override
-//    public void onClick(View v) {
-//        switch (v.getId()) {
-//            case R.id.bt_share:
-//                new ShareTask().execute(0);
-//                setResult(RESULT_OK);
-//                break;
-//            default:
-//                break;
-//        }
-//    }
-
     private void picImgFromAlbum() {
-        ImageConfig imageConfig = new ImageConfig.Builder(new ImageLoader())
+        ImageConfig imageConfig = new ImageConfig.Builder(new GlideLoader())
                 .mutiSelect()
                 .mutiSelectMaxSize(9)
                 .pathList(paths)
@@ -104,7 +92,7 @@ public class ShareActivity extends AppCompatActivity implements ShareCallBack {
         Map<String, String> map = new HashMap<>();
         map.put("access_token", AccessTokenKeeper.readAccessToken(ShareActivity.this).getToken());
         map.put("status", mEditText.getText().toString() + "        http://www.baidu.com");
-
+        //"access_token" -> "2.00tWqpvDKQ8YQB16c58355ef0jh2_B"
         if(mFiles == null) {
             shareModel.postShare(map, null,ShareActivity.this);
         }else {
@@ -148,12 +136,10 @@ public class ShareActivity extends AppCompatActivity implements ShareCallBack {
         }
         mAdapter.notifyDataSetChanged();
         mFile = new File(paths.get(0));
-        for (int i=0;i<paths.size();i++){
+        for (int i=0;i<paths.size();i++) {
             File file = new File(paths.get(i));
             mFiles.add(file);
         }
-//        Uri imageUri = Uri.parse(paths.get(0));
-//        mFile =(UriToFile(imageUri));
     }
 
     //Uri转File

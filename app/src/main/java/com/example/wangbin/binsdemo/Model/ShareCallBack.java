@@ -5,5 +5,5 @@ package com.example.wangbin.binsdemo.Model;
  */
 
 public interface ShareCallBack {
-    public void isPostSuccessful(Boolean bool);
+    void isPostSuccessful(Boolean bool);
 }

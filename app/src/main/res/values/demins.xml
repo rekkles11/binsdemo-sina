@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="home_original_weiboitem_font">15sp</dimen><!--微博内容中字体大小:16中号,15小号-->
+
+</resources>

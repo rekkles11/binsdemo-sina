@@ -1,9 +1,11 @@
 package com.example.wangbin.binsdemo.Utils;
 
+import java.util.List;
+
 /**
  * Created by momo on 2017/12/28.
  */
 
 public interface VideoCallBack {
-    public void isPlay(Boolean bool,int postion);
+    void isPlay(int postion);
 }
