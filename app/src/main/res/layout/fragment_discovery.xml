@@ -3,6 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/layout_background"
     android:orientation="vertical">
 
     <include layout="@layout/toolbar_discover" />
@@ -36,6 +37,7 @@
                 android:layout_height="45dp"
                 android:layout_marginTop="8dp"
                 android:clickable="true"
+                android:background="@color/white"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -78,8 +80,9 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:layout_marginTop="0.5dp"
+                android:layout_marginTop="1dp"
                 android:clickable="true"
+                android:background="@color/white"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -114,8 +117,9 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="1dp"
                 android:clickable="true"
+                android:background="@color/white"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -158,8 +162,9 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:layout_marginTop="0.5dp"
+                android:layout_marginTop="1dp"
                 android:clickable="true"
+                android:background="@color/white"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -202,8 +207,9 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:layout_marginTop="0.5dp"
+                android:layout_marginTop="1dp"
                 android:clickable="true"
+                android:background="@color/white"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -240,6 +246,7 @@
                 android:layout_height="45dp"
                 android:layout_marginTop="8dp"
                 android:clickable="true"
+                android:background="@color/white"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -273,8 +280,9 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:layout_marginTop="0.5dp"
+                android:layout_marginTop="1dp"
                 android:clickable="true"
+                android:background="@color/white"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -317,8 +325,9 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:layout_marginTop="0.5dp"
+                android:layout_marginTop="1dp"
                 android:clickable="true"
+                android:background="@color/white"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -361,8 +370,9 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:layout_marginTop="0.5dp"
+                android:layout_marginTop="1dp"
                 android:clickable="true"
+                android:background="@color/white"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -397,8 +407,9 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:layout_marginTop="0.5dp"
+                android:layout_marginTop="1dp"
                 android:clickable="true"
+                android:background="@color/white"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -432,8 +443,9 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:layout_marginTop="0.5dp"
+                android:layout_marginTop="1dp"
                 android:clickable="true"
+                android:background="@color/white"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -468,8 +480,9 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:layout_marginTop="0.5dp"
+                android:layout_marginTop="1dp"
                 android:clickable="true"
+                android:background="@color/white"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -504,8 +517,9 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:layout_marginTop="0.5dp"
+                android:layout_marginTop="1dp"
                 android:clickable="true"
+                android:background="@color/white"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -540,8 +554,9 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:layout_marginTop="0.5dp"
+                android:layout_marginTop="1dp"
                 android:clickable="true"
+                android:background="@color/white"
                 android:orientation="horizontal">
 
                 <ImageView

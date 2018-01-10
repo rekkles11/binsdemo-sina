@@ -1,6 +1,5 @@
-package com.example.wangbin.binsdemo.Utils;
+package com.example.wangbin.binsdemo.Utils.Image;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.view.MotionEvent;

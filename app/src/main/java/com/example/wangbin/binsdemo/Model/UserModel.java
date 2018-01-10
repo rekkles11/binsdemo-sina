@@ -39,13 +39,13 @@ public class UserModel {
                     callBack.getUser(response.body());
                     saveToDB(apiStr,response.body());
                 }else {
-                    callBack.getUser(new OrderDao(mContext).getUserData(apiStr));
+                    callBack.getUser(new OrderDao(mContext).getData(apiStr,User.class));
                 }
             }
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-                callBack.getUser(new OrderDao(mContext).getUserData(apiStr));
+                callBack.getUser(new OrderDao(mContext).getData(apiStr,User.class));
             }
         });
 

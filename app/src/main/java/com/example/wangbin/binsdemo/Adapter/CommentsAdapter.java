@@ -10,8 +10,8 @@ import android.widget.TextView;
 
 import com.example.wangbin.binsdemo.Entity.Comments;
 import com.example.wangbin.binsdemo.R;
-import com.example.wangbin.binsdemo.Utils.GlideLoader;
-import com.example.wangbin.binsdemo.Utils.WeiBoContentTextUtil;
+import com.example.wangbin.binsdemo.Utils.Image.GlideLoader;
+import com.example.wangbin.binsdemo.Utils.weiboContent.WeiBoContentTextUtil;
 
 import java.util.List;
 
@@ -39,13 +39,15 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.Commen
 
     @Override
     public void onBindViewHolder(CommentsViewHolder holder, int position) {
-        Comments comments = mList.get(position);
-        new GlideLoader().displayCircleImg(mContext,comments.getUser().getProfileImageUrl(),
-                50,50,holder.profileImg);
-        holder.commentName.setText(comments.getUser().getName());
-        holder.commentTime.setText(comments.getCreatedAt());
-        holder.commentContent.setText(WeiBoContentTextUtil.getWeiBoContent(comments.getText(),
-                mContext,holder.commentContent));
+        if (mList!=null&&position<mList.size()) {
+            Comments comments = mList.get(position);
+            new GlideLoader().displayCircleImg(mContext, comments.getUser().getProfileImageUrl(),
+                    50, 50, holder.profileImg);
+            holder.commentName.setText(comments.getUser().getName());
+            holder.commentTime.setText(comments.getCreatedAt());
+            holder.commentContent.setText(new WeiBoContentTextUtil().getWeiBoContent(comments.getText(),
+                    mContext, holder.commentContent));
+        }
     }
 
     @Override

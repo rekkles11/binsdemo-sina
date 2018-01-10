@@ -5,12 +5,11 @@ import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.example.wangbin.binsdemo.Entity.PicUrl;
 import com.example.wangbin.binsdemo.R;
-import com.example.wangbin.binsdemo.Utils.GlideLoader;
-import com.example.wangbin.binsdemo.Utils.ZoomImageView;
+import com.example.wangbin.binsdemo.Utils.Image.GlideLoader;
+import com.example.wangbin.binsdemo.Utils.Image.ZoomImageView;
 
 import java.util.List;
 

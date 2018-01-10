@@ -1,19 +1,14 @@
-package com.example.wangbin.binsdemo.Utils;
+package com.example.wangbin.binsdemo.Utils.weiboContent;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
-import android.text.style.ForegroundColorSpan;
 import android.text.style.ImageSpan;
 import android.view.View;
 import android.widget.EditText;
@@ -36,9 +31,10 @@ public class WeiBoContentTextUtil {
     private static final String URL = "http://[a-zA-Z0-9+&@#/%?=~_\\-|!:,\\.;]*[a-zA-Z0-9+&@#/%=~_|]";// url
     private static final String EMOJI = "\\[(\\S+?)\\]";//emoji 表情
 
+
     private static final String ALL = "(" + AT + ")" + "|" + "(" + TOPIC + ")" + "|" + "(" + URL + ")" + "|" + "(" + EMOJI + ")";
 
-    public static SpannableStringBuilder getWeiBoContent(String source, final Context context, TextView textView) {
+    public SpannableStringBuilder getWeiBoContent(String source, final Context context, TextView textView) {
         SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(source);
         //设置正则
         Pattern pattern = Pattern.compile(ALL);
@@ -67,10 +63,6 @@ public class WeiBoContentTextUtil {
                 WeiBoContentClickableSpan myClickableSpan = new WeiBoContentClickableSpan(context) {
                     @Override
                     public void onClick(View widget) {
-//                        Intent intent = new Intent(context, ProfileSwipeActivity.class);
-//                        String screen_name = at.substring(1);
-//                        intent.putExtra("screenName", screen_name);
-//                        context.startActivity(intent);
                         Toast.makeText(context, "点击了用户：" + at, Toast.LENGTH_SHORT).show();
                     }
                 };
@@ -88,6 +80,7 @@ public class WeiBoContentTextUtil {
                 };
                 spannableStringBuilder.setSpan(clickableSpan, start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
             }
+
 
             // 处理url地址
             if (url != null) {
@@ -113,15 +106,6 @@ public class WeiBoContentTextUtil {
                     }
 
                 };
-
-//                WeiBoContentClickableSpan keyWordClickableSpan = new WeiBoContentClickableSpan(context) {
-//                    @Override
-//                    public void onClick(View widget) {
-//                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-//                        context.startActivity(browserIntent);
-//                    }
-//                }
-
                 spannableStringBuilder.setSpan(imageSpan, start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
             }
             //emoji
@@ -150,6 +134,7 @@ public class WeiBoContentTextUtil {
                 }
             }
         }
+
         return spannableStringBuilder;
     }
 }

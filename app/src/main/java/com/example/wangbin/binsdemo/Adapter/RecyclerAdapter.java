@@ -2,15 +2,8 @@ package com.example.wangbin.binsdemo.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.TextPaint;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
-import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.TextureView;
 import android.view.View;
@@ -20,7 +13,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.wangbin.binsdemo.Activity.ImageActivity;
 import com.example.wangbin.binsdemo.Activity.WeiboDataActivity;
@@ -28,12 +20,11 @@ import com.example.wangbin.binsdemo.Entity.PicUrl;
 import com.example.wangbin.binsdemo.Entity.Status;
 import com.example.wangbin.binsdemo.R;
 import com.example.wangbin.binsdemo.Utils.ExoPlayerInstance;
-import com.example.wangbin.binsdemo.Utils.GlideLoader;
+import com.example.wangbin.binsdemo.Utils.Image.GlideLoader;
 import com.example.wangbin.binsdemo.Utils.MyGridView;
-import com.example.wangbin.binsdemo.Utils.PicSize;
-import com.example.wangbin.binsdemo.Utils.WeiBoContentTextUtil;
+import com.example.wangbin.binsdemo.Utils.Image.PicSize;
+import com.example.wangbin.binsdemo.Utils.weiboContent.WeiBoContentTextUtil;
 import com.github.lisicnu.log4android.LogManager;
-import com.google.android.exoplayer2.SimpleExoPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +55,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         Status status = mList.get(position);
-        holder.text.setText(WeiBoContentTextUtil.getWeiBoContent(status.getText(),mContext,holder.text));
+        holder.text.setText(new WeiBoContentTextUtil().getWeiBoContent(status.getText(),mContext,holder.text));
         holder.reposts.setText(status.getRepostsCount().toString());
         holder.comments.setText(status.getCommentsCount().toString());
         holder.attltudes.setText(status.getAttitudesCount().toString());
@@ -78,7 +69,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         if (status.getPicUrls().size()==0||status.getPicUrls() == null) {
             holder.gridView.setVisibility(View.GONE);
             holder.frameLayout.setVisibility(View.VISIBLE);
-            initPlayer(holder.textureView);
+            holder.pauseView.setVisibility(View.VISIBLE);
         }
         else {
             holder.frameLayout.setVisibility(View.GONE);
@@ -106,20 +97,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         }
     }
 
-    private void initPlayer(TextureView textureView) {
-        ExoPlayerInstance.getInstance().getPlayer(mContext);
-        Uri playerUri = Uri.parse("https://storage.googleapis.com/android-tv/Sample%20videos/" +
-                "Demo%20Slam/Google%20Demo%20Slam_%20Hangin'%20with%20the%20Google%20Search%20Bar.mp4");
-        ExoPlayerInstance.getInstance().setmExoPlayer(playerUri,textureView,false,mContext);
-    }
-
-
-
     public void setGridView(List<PicUrl> picUrls,MyGridView view) {
         view.setColumn(picUrls.size(),width);
         view.setAdapter(new GridAdapter(mContext,picUrls,view.getOneItemWidth(),false));
-
-
     }
 
 

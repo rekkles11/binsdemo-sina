@@ -1,4 +1,4 @@
-package com.example.wangbin.binsdemo.Utils;
+package com.example.wangbin.binsdemo.Utils.Image;
 
 import android.content.Context;
 import android.graphics.Bitmap;

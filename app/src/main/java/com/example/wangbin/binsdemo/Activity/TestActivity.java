@@ -1,5 +1,6 @@
 package com.example.wangbin.binsdemo.Activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -7,9 +8,12 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.TextureView;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.wangbin.binsdemo.R;
 import com.example.wangbin.binsdemo.Utils.ExoPlayerInstance;
+import com.example.wangbin.binsdemo.Utils.TestInstance;
 import com.github.lisicnu.log4android.LogManager;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -33,16 +37,21 @@ import com.google.android.exoplayer2.util.Util;
  * Created by momo on 2017/12/29.
  */
 
-public class TestActivity extends AppCompatActivity {
+public class TestActivity extends Activity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
-        TextureView textureView = (TextureView)findViewById(R.id.terview_test);
-        ExoPlayerInstance.getInstance().getPlayer(TestActivity.this);
-        Uri playerUri = Uri.parse("https://storage.googleapis.com/android-tv/Sample%20videos/Demo%20Slam/Google%20Demo%20Slam_%20Hangin'%20with%20the%20Google%20Search%20Bar.mp4");
-        ExoPlayerInstance.getInstance().setmExoPlayer(playerUri, textureView, true, TestActivity.this);
+        TextView textView = (TextView) findViewById(R.id.tv_test);
+
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getBaseContext(), Main2Activity.class));
+            }
+        });
+        TestInstance.getIntance(this).setTextView(textView);
 
 
     }

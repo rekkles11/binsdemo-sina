@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.example.wangbin.binsdemo.Activity.HomeActivity;
-import com.example.wangbin.binsdemo.Fragment.HomeFragment;
 import com.github.lisicnu.log4android.LogManager;
 
 /**
@@ -39,7 +38,12 @@ public abstract class EndLessOnScrollListener extends RecyclerView.OnScrollListe
     int perPostion;
     Boolean isHome =false;
 
-
+    //普通的加载更多
+    public EndLessOnScrollListener( LinearLayoutManager linearLayoutManager, Context context) {
+        this.mLinearLayoutManager = linearLayoutManager;
+        this.mContext = context;
+    }
+    //带视频的加载更多
     public EndLessOnScrollListener(int pos, LinearLayoutManager linearLayoutManager, Context context, VideoCallBack videoCallBack) {
         this.mLinearLayoutManager = linearLayoutManager;
         this.mContext = context;
@@ -47,6 +51,7 @@ public abstract class EndLessOnScrollListener extends RecyclerView.OnScrollListe
         this.playPostion = pos;
         this.perPostion = pos;
     }
+    //来自HomeFragment判断是否隐藏bar
     public EndLessOnScrollListener(int pos, LinearLayoutManager linearLayoutManager, Context context, VideoCallBack videoCallBack,Boolean bool) {
         this.mLinearLayoutManager = linearLayoutManager;
         this.mContext = context;
@@ -63,51 +68,53 @@ public abstract class EndLessOnScrollListener extends RecyclerView.OnScrollListe
         lastVisibleItemPosition = ((LinearLayoutManager) mLayoutManager).findLastVisibleItemPosition();
         View view = mLayoutManager.findViewByPosition(playPostion);
 
-        //判断视频的播放
-        if (view != null) {
-            int height = view.getHeight();
-            int[] locations = new int[2];
-            view.getLocationInWindow(locations);
-            int y = locations[1];
-            if (mContext!=null) {
-                WindowManager wm = (WindowManager) mContext.getSystemService(mContext.WINDOW_SERVICE);
-                DisplayMetrics dm = new DisplayMetrics();
-                wm.getDefaultDisplay().getMetrics(dm);
-                int screenHeight = dm.heightPixels;
-                if (y < 0) {
-                    if ((height + y) * 10 / height < 4) {
-                        ExoPlayerInstance.getInstance().releasePlayer();
-                        playPostion++;
-                    }
-                } else {
-                    if ((screenHeight - y) * 10 / height < 4) {
-                        ExoPlayerInstance.getInstance().releasePlayer();
-                        playPostion--;
+        if (mVideoCallBack!=null) {
+            //判断视频的播放
+            if (view != null) {
+                int height = view.getHeight();
+                int[] locations = new int[2];
+                view.getLocationInWindow(locations);
+                int y = locations[1];
+                if (mContext != null) {
+                    WindowManager wm = (WindowManager) mContext.getSystemService(mContext.WINDOW_SERVICE);
+                    DisplayMetrics dm = new DisplayMetrics();
+                    wm.getDefaultDisplay().getMetrics(dm);
+                    int screenHeight = dm.heightPixels;
+                    if (y < 0) {
+                        if ((height + y) * 10 / height < 4) {
+                            ExoPlayerInstance.getInstance(mContext.getApplicationContext()).releasePlayer();
+                            playPostion++;
+                        }
+                    } else {
+                        if ((screenHeight - y) * 10 / height < 4) {
+                            ExoPlayerInstance.getInstance(mContext.getApplicationContext()).releasePlayer();
+                            playPostion--;
+                        }
                     }
                 }
             }
+
+            //判断底部bar的情况
+            if (isHome) {
+                //手指向上滑动
+                if (mScrolledDistance > 80 && mBarVisible) {
+                    ((HomeActivity) mContext).hideButtonBar();
+                    mBarVisible = false;
+                    mScrolledDistance = 0;
+                }
+                //手指向下滑动
+                else if (mScrolledDistance < -80 && !mBarVisible) {
+                    ((HomeActivity) mContext).showBottomBar();
+                    mBarVisible = true;
+                    mScrolledDistance = 0;
+                }
+                if ((mBarVisible && dy > 0) || (!mBarVisible && dy < 0)) {
+                    mScrolledDistance += dy;
+                }
+            }
+
+
         }
-
-        //判断底部bar的情况
-        if (isHome) {
-            //手指向上滑动
-            if (mScrolledDistance > 80 && mBarVisible) {
-                ((HomeActivity) mContext).hideButtonBar();
-                mBarVisible = false;
-                mScrolledDistance = 0;
-            }
-            //手指向下滑动
-            else if (mScrolledDistance < -80 && !mBarVisible) {
-                ((HomeActivity) mContext).showBottomBar();
-                mBarVisible = true;
-                mScrolledDistance = 0;
-            }
-            if ((mBarVisible && dy > 0) || (!mBarVisible && dy < 0)) {
-                mScrolledDistance += dy;
-            }
-        }
-
-
 
     }
 
@@ -117,11 +124,15 @@ public abstract class EndLessOnScrollListener extends RecyclerView.OnScrollListe
         RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
         visibleItemCount = layoutManager.getChildCount();
         totalItemCount = layoutManager.getItemCount();
-        LogManager.d("item.count::::", firstVisibleItemPostion + "+" + lastVisibleItemPosition + "+" + totalItemCount);
-        if (playPostion!=perPostion || playPostion == 0) {
-            LogManager.d("exoplayer:::",playPostion+"+"+perPostion);
-            mVideoCallBack.isPlay(playPostion);
-            perPostion = playPostion;
+        LogManager.d("21item.count::::", firstVisibleItemPostion + "+" + lastVisibleItemPosition + "+" + totalItemCount);
+        if (mVideoCallBack!=null) {
+            LogManager.d("exoplayer:::", playPostion + "+" + perPostion);
+            if (playPostion != perPostion || playPostion == 0 || playPostion < firstVisibleItemPostion) {
+                if (playPostion < firstVisibleItemPostion)
+                    playPostion = firstVisibleItemPostion;
+                mVideoCallBack.isPlay(playPostion);
+                perPostion = playPostion;
+            }
         }
         if (newState == RecyclerView.SCROLL_STATE_IDLE &&
                 lastVisibleItemPosition >= (totalItemCount - 1)) {

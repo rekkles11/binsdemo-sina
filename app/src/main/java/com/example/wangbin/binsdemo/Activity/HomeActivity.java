@@ -7,7 +7,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
@@ -17,6 +16,7 @@ import com.example.wangbin.binsdemo.Fragment.MessageFragment;
 import com.example.wangbin.binsdemo.Fragment.MyselfFragment;
 import com.example.wangbin.binsdemo.R;
 import com.example.wangbin.binsdemo.Utils.BarManager;
+import com.example.wangbin.binsdemo.Utils.ExoPlayerInstance;
 
 /**
  * Created by momo on 2018/1/2.
@@ -37,7 +37,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private RelativeLayout mMessageTabRl;
     private RelativeLayout mDiscoverTabRl;
     private RelativeLayout mMySelfTabRl;
-    private ImageView mPostTabIv;
+    private RelativeLayout mPostTabIv;
     private LinearLayout mButtonBarLl;
     private FragmentManager mFragmentManager;
     private String mCurrentIndex;
@@ -49,12 +49,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_home);
         prepareView();
         initView();
-        //如果是从崩溃中恢复，还需要加载之前的缓存
-        if (savedInstanceState != null) {
-            restoreFragment(savedInstanceState);
-        } else {
-            setTabFragment(TAB_HOME_FRAGMENT);
-        }
+        switchToFragment(TAB_HOME_FRAGMENT);
     }
 
 
@@ -71,7 +66,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mMessageTabRl = (RelativeLayout) findViewById(R.id.tv_message);
         mDiscoverTabRl = (RelativeLayout) findViewById(R.id.tv_discovery);
         mMySelfTabRl = (RelativeLayout) findViewById(R.id.tv_profile);
-        mPostTabIv = (ImageView) findViewById(R.id.fl_post);
+        mPostTabIv = (RelativeLayout) findViewById(R.id.fl_post);
         mButtonBarLl = (LinearLayout) findViewById(R.id.buttonBarId);
 
         mHomeTabRl.setOnClickListener(this);
@@ -88,66 +83,25 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.tv_home:
-                setTabFragment(TAB_HOME_FRAGMENT);
+                switchToFragment(TAB_HOME_FRAGMENT);
                 break;
             case R.id.tv_message:
-                setTabFragment(TAB_MESSAGE_FRAGMENT);
+                switchToFragment(TAB_MESSAGE_FRAGMENT);
                 break;
             case R.id.fl_post:
                 Intent intent = new Intent(HomeActivity.this, ShareActivity.class);
                 startActivity(intent);
                 break;
             case R.id.tv_discovery:
-                setTabFragment(TAB_DISCOVERY_FRAGMENT);
+                switchToFragment(TAB_DISCOVERY_FRAGMENT);
                 break;
             case R.id.tv_profile:
-                setTabFragment(TAB_PROFILE_FRAGMENT);
+                switchToFragment(TAB_PROFILE_FRAGMENT);
                 break;
             default:
                 break;
         }
 
-    }
-
-    /**
-     * 显示指定的fragment，并且把对应的导航栏的icon设置成高亮状态
-     * 注意：
-     * 1. 如果选项卡已经位于当前页，则执行其他操作
-     *
-     * @param tabName 需要切换到的具体页面
-     */
-    private void setTabFragment(String tabName) {
-//        if (!tabName.equals(mCurrentIndex)) {
-            switchToFragment(tabName);
-//        } else {
-//            alreadyAtFragment(mCurrentIndex);
-//        }
-    }
-
-    /**
-     * 如果选项卡已经位于当前页
-     * 1. 对于首页fragment，执行：滑动到顶部，并且刷新时间线，获取最新微博
-     * 2. 对于消息fragment，执行：无
-     * 3. 对于发现fragment，执行：无
-     * 4. 对于关于我fragment，执行：无
-     *
-     * @param currentIndex
-     */
-    private void alreadyAtFragment(String currentIndex) {
-        //如果在当前页
-        switch (currentIndex) {
-            case TAB_HOME_FRAGMENT:
-//                if (mHomeFragment != null) {
-//                    mHomeFragment.scrollToTop(true);
-//                }
-                break;
-            case TAB_MESSAGE_FRAGMENT:
-                break;
-            case TAB_DISCOVERY_FRAGMENT:
-                break;
-            case TAB_PROFILE_FRAGMENT:
-                break;
-        }
     }
 
     /**
@@ -276,5 +230,15 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mMessageTabRl.setSelected(false);
         mDiscoverTabRl.setSelected(false);
         mMySelfTabRl.setSelected(false);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ExoPlayerInstance.getInstance(HomeActivity.this.getApplicationContext()).releasePlayer();
+        mHomeFragment = null;
+        mMessageFragment =null;
+        mDiscoveryFragment = null;
+        mMySelfFragment = null;
     }
 }

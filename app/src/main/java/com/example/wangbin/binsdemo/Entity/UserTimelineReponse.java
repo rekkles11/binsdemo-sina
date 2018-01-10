@@ -19,10 +19,10 @@ public class UserTimelineReponse implements Serializable{
     private Boolean hasvisible;
     @SerializedName("previous_cursor")
     @Expose
-    private Integer previousCursor;
+    private Long previousCursor;
     @SerializedName("next_cursor")
     @Expose
-    private Integer nextCursor;
+    private Long nextCursor;
     @SerializedName("total_number")
     @Expose
     private Integer totalNumber;
@@ -54,19 +54,19 @@ public class UserTimelineReponse implements Serializable{
         this.hasvisible = hasvisible;
     }
 
-    public Integer getPreviousCursor() {
+    public Long getPreviousCursor() {
         return previousCursor;
     }
 
-    public void setPreviousCursor(Integer previousCursor) {
+    public void setPreviousCursor(Long previousCursor) {
         this.previousCursor = previousCursor;
     }
 
-    public Integer getNextCursor() {
+    public Long getNextCursor() {
         return nextCursor;
     }
 
-    public void setNextCursor(Integer nextCursor) {
+    public void setNextCursor(Long nextCursor) {
         this.nextCursor = nextCursor;
     }
 

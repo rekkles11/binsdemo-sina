@@ -3,13 +3,20 @@ package com.example.wangbin.binsdemo.Utils;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.wangbin.binsdemo.Adapter.GridAdapter;
+import com.example.wangbin.binsdemo.Entity.PicUrl;
 import com.example.wangbin.binsdemo.Entity.Status;
 import com.example.wangbin.binsdemo.R;
+import com.example.wangbin.binsdemo.Utils.Image.GlideLoader;
+import com.example.wangbin.binsdemo.Utils.weiboContent.WeiBoContentTextUtil;
 import com.github.lisicnu.log4android.LogManager;
+
+import java.util.List;
 
 /**
  * Created by momo on 2018/1/4.
@@ -28,6 +35,7 @@ public class OriginPicTextHeaderView extends LinearLayout {
     TextView create_at;
     TextView weibo_content;
     MyGridView myGridView;
+    FrameLayout playerView;
     TextView reports;
     TextView comments;
     TextView attltudes;
@@ -61,6 +69,7 @@ public class OriginPicTextHeaderView extends LinearLayout {
         create_at = (TextView) mView.findViewById(R.id.tv_usertimeline_created_at);
         weibo_content = (TextView) mView.findViewById(R.id.tv_text);
         myGridView = (MyGridView) mView.findViewById(R.id.grid_usertimeline_pic_ids);
+        playerView = (FrameLayout)findViewById(R.id.fram_palyer);
         reports = (TextView) mView.findViewById(R.id.tv_reposts);
         comments = (TextView) mView.findViewById(R.id.tv_comments);
         attltudes = (TextView) mView.findViewById(R.id.tv_attltudes);
@@ -84,11 +93,19 @@ public class OriginPicTextHeaderView extends LinearLayout {
                                             ,50,img_head);
         screen_name.setText(status.getUser().getName());
         create_at.setText(status.getCreatedAt());
-        weibo_content.setText(WeiBoContentTextUtil.getWeiBoContent(status.getText()
+        weibo_content.setText(new WeiBoContentTextUtil().getWeiBoContent(status.getText()
                 ,mContext,weibo_content));
         retweetView.setText("转发  "+String.valueOf(status.getRepostsCount()));
         commentView.setText("评论  "+String.valueOf(status.getCommentsCount()));
         likeView.setText("赞  "+String.valueOf(status.getAttitudesCount()));
+        List<PicUrl> picUrls =  status.getPicUrls();
+        if (picUrls.size()!=0||picUrls!= null) {
+            myGridView.setVisibility(View.VISIBLE);
+            int width = (int) getResources().getDisplayMetrics().widthPixels;
+            myGridView.setColumn(picUrls.size(), width);
+            myGridView.setAdapter(new GridAdapter(mContext, picUrls, myGridView.getOneItemWidth(), false));
+        }
+        playerView.setVisibility(View.GONE);
 
         retweetView.setOnClickListener(new OnClickListener() {
             @Override

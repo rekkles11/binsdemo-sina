@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/layout_background">
 
     <FrameLayout
         android:id="@+id/main_content_fl"
@@ -80,10 +81,10 @@
                     android:layout_marginLeft="15dp"
                     android:layout_marginRight="15dp"
                     android:layout_marginTop="4dp"
+                    android:id="@+id/fl_post"
                     android:background="@drawable/rect_orgin_auto">
 
                     <ImageView
-                        android:id="@+id/fl_post"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginBottom="6dp"

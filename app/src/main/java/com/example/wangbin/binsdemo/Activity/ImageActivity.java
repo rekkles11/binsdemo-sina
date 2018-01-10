@@ -1,7 +1,6 @@
 package com.example.wangbin.binsdemo.Activity;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
@@ -12,7 +11,7 @@ import android.view.ViewGroup;
 import com.example.wangbin.binsdemo.Adapter.ImagePageAdapter;
 import com.example.wangbin.binsdemo.Entity.PicUrl;
 import com.example.wangbin.binsdemo.R;
-import com.example.wangbin.binsdemo.Utils.ZoomImageView;
+import com.example.wangbin.binsdemo.Utils.Image.ZoomImageView;
 
 import java.util.ArrayList;
 import java.util.List;

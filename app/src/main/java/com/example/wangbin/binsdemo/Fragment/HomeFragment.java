@@ -14,8 +14,10 @@ import android.view.LayoutInflater;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.example.wangbin.binsdemo.Activity.UserTimeLineActivity;
 import com.example.wangbin.binsdemo.Adapter.HeaderAndFooterWrapper;
 import com.example.wangbin.binsdemo.Adapter.RecyclerAdapter;
 import com.example.wangbin.binsdemo.Entity.Status;
@@ -24,12 +26,12 @@ import com.example.wangbin.binsdemo.Model.UserTimelineModel;
 import com.example.wangbin.binsdemo.R;
 import com.example.wangbin.binsdemo.Utils.EndLessOnScrollListener;
 import com.example.wangbin.binsdemo.Utils.ExoPlayerInstance;
+import com.example.wangbin.binsdemo.Utils.TimelineTask;
 import com.example.wangbin.binsdemo.Utils.VideoCallBack;
 import com.example.wangbin.binsdemo.Utils.WritePermission;
 import com.github.lisicnu.log4android.LogManager;
 import com.sina.weibo.sdk.auth.AccessTokenKeeper;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +44,6 @@ public class HomeFragment extends Fragment implements UserTimelineCallBack,Video
 
     Context mContext;
     public View mView;
-
     RecyclerView mRecyclerView;
     LinearLayoutManager mLayoutManager;
     RecyclerAdapter mAdapter;
@@ -50,13 +51,12 @@ public class HomeFragment extends Fragment implements UserTimelineCallBack,Video
     Map<String, String> map;
     List<Status> mList;
     Boolean isFirst = true;
-    int mAddNum=0;
     SwipeRefreshLayout mSwipeRefreshLayout;
     View mHeaderView;
     int playPostion =0;
     int mPage =1;
-
     public EndLessOnScrollListener mScrollListener;
+    private RefreshListener mRefreshListener;
 
 
     @Nullable
@@ -73,7 +73,8 @@ public class HomeFragment extends Fragment implements UserTimelineCallBack,Video
     public void initView() {
         mHeaderView = LayoutInflater.from(mContext).inflate(R.layout.header_item,null);
         mSwipeRefreshLayout = (SwipeRefreshLayout) mView.findViewById(R.id.layout_swipe_refresh);
-        mSwipeRefreshLayout.setOnRefreshListener(new RefreshListener());
+        mRefreshListener = new RefreshListener();
+        mSwipeRefreshLayout.setOnRefreshListener(mRefreshListener);
         mRecyclerView = (RecyclerView) mView.findViewById(R.id.recycler_usertimeline);
         mLayoutManager = new LinearLayoutManager(mContext);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -82,7 +83,6 @@ public class HomeFragment extends Fragment implements UserTimelineCallBack,Video
             public void onLoadMore() {
                 LogManager.d("load:::::1",mWrapper.mInnerAdapter.getItemCount());
                 getUserTimeline(mPage);
-                mAddNum=0;
             }
         };
         mRecyclerView.addOnScrollListener(mScrollListener);
@@ -93,11 +93,11 @@ public class HomeFragment extends Fragment implements UserTimelineCallBack,Video
     public void getUserTimeline(int page) {
         LogManager.d("page1::",page);
         map.put("page", String.valueOf(page));
-        mPage++;
-        PublicTimelineTask publicTimelineTask = new PublicTimelineTask();
+//        加载下一页
+//        mPage++;
         WritePermission.verifystoragePermissons((Activity) mContext);
         try {
-            publicTimelineTask.execute(map);
+            new TimelineTask(mContext,"friendstimeline").execute(map);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -106,20 +106,26 @@ public class HomeFragment extends Fragment implements UserTimelineCallBack,Video
     public void isPlay(int postion) {
         this.playPostion = postion;
         LogManager.d("explayer::",postion);
-        if(mList.get(postion).getPicUrls().size()==0){
+        if(mList!=null&&(mList.get(postion).getPicUrls().size()==0||mList.get(postion).getPicUrls()== null)){
             View view = mLayoutManager.findViewByPosition(postion);
             final LinearLayout layout = (LinearLayout) view;
-            TextureView textureView = (TextureView) layout.findViewById(R.id.view_exoplayer);
-            ExoPlayerInstance.getInstance().getPlayer(mContext);
-            Uri playerUri = Uri.parse("https://storage.googleapis.com/android-tv/Sample%20videos/Demo%20Slam/Google%20Demo%20Slam_%20Hangin'%20with%20the%20Google%20Search%20Bar.mp4");
-            ExoPlayerInstance.getInstance().setmExoPlayer(playerUri, textureView, true, mContext);
+            try {
+                TextureView textureView = (TextureView) layout.findViewById(R.id.view_exoplayer);
+                ImageView imageView = (ImageView) layout.findViewById(R.id.img_pause);
+                ExoPlayerInstance instance = ExoPlayerInstance.getInstance(mContext.getApplicationContext());
+                instance.getPlayer();
+                Uri playerUri = Uri.parse("https://storage.googleapis.com/android-tv/Sample%20videos/Demo%20Slam/Google%20Demo%20Slam_%20Hangin'%20with%20the%20Google%20Search%20Bar.mp4");
+                instance.setmExoPlayer(playerUri, textureView, true, imageView);
+            }catch (Exception e){
+                LogManager.d("isplay",e.getMessage());
+            }
         }
     }
 
     @Override
-    public void getResult(List<Status> list, Boolean isSuccess) {
+    public void getResult(List<Status> list) {
         if (isFirst){
-            if (list!=null) {
+            if (list!=null&&list.size()!=0) {
                 mList = (list);
                 LogManager.d("list::::1",list.size());
                 int width = (int) getResources().getDisplayMetrics().widthPixels;
@@ -131,9 +137,7 @@ public class HomeFragment extends Fragment implements UserTimelineCallBack,Video
             }
         }else {
             if (list!=null) {
-                mAddNum = list.size();
                 mList.addAll(list);
-                LogManager.d("slist::::", list.size() + "+" + mList.size());
                 mWrapper.notifyItemRangeInserted(mList.size()-list.size(), list.size());
             }
 
@@ -149,26 +153,9 @@ public class HomeFragment extends Fragment implements UserTimelineCallBack,Video
         }
     }
 
-
-    private class PublicTimelineTask extends AsyncTask<Map<String, String>, Integer, List<Status> > {
-        public PublicTimelineTask() {
-            super();
-        }
-        @Override
-        protected List<com.example.wangbin.binsdemo.Entity.Status> doInBackground(Map<String, String>[] maps) {
-            UserTimelineModel userTimelineModel = new UserTimelineModel(mContext);
-            try {
-                userTimelineModel.getStatus(maps[0], HomeFragment.this,"publictimeline");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-
-            return userTimelineModel.getStatusList();
-        }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ExoPlayerInstance.getInstance(mContext.getApplicationContext()).releasePlayer();
     }
-
-
-
-
 }

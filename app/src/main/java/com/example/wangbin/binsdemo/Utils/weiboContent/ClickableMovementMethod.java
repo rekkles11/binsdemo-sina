@@ -1,4 +1,4 @@
-package com.example.wangbin.binsdemo.Utils;
+package com.example.wangbin.binsdemo.Utils.weiboContent;
 import android.text.Layout;
 import android.text.Selection;
 import android.text.Spannable;

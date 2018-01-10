@@ -10,6 +10,8 @@
     <color name="colorYellow">#ff8800</color>
     <color name="skyblue">#00BFFF</color>
 
+    <color name="layout_background">@color/yancy_grey100</color>
+
     <color name="home_bottombar_bg">#FFFFFF</color><!--底部bar的背景样式-->
     <color name="home_bottombar_font">#929292</color><!--底部bar字体颜色-->
     <color name="home_weiboitem_content_keyword">#507daf</color><!--关键词的颜色-->

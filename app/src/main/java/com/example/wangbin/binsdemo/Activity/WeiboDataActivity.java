@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,7 +17,9 @@ import com.example.wangbin.binsdemo.Entity.Status;
 import com.example.wangbin.binsdemo.Model.CommentsCallBack;
 import com.example.wangbin.binsdemo.Model.CommentsModel;
 import com.example.wangbin.binsdemo.R;
+import com.example.wangbin.binsdemo.Utils.EndLessOnScrollListener;
 import com.example.wangbin.binsdemo.Utils.OriginPicTextHeaderView;
+import com.example.wangbin.binsdemo.Utils.TimelineTask;
 import com.example.wangbin.binsdemo.Utils.WeiboDataClickLinstener;
 import com.sina.weibo.sdk.auth.AccessTokenKeeper;
 
@@ -35,6 +38,12 @@ public class WeiboDataActivity extends AppCompatActivity implements CommentsCall
     private HeaderAndFooterWrapper mWrapper;
     private CommentsAdapter mAdapter;
     Map<String,String> mMap;
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    private String mWeiboId;
+    private LinearLayoutManager mLayoutManager;
+    private LinearLayout mHeaderView;
+    private Boolean isFirst = true;
+    private List<Comments> mList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,37 +54,75 @@ public class WeiboDataActivity extends AppCompatActivity implements CommentsCall
     }
 
     private void initView() {
+        mSwipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.base_swipe_refresh_widget);
+        mSwipeRefreshLayout.setOnRefreshListener(new DataRefreshLisenter());
         mRecyclerView = findViewById(R.id.base_RecyclerView);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(layoutManager);
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mStatus = (Status) getIntent().getSerializableExtra("weiboitem");
+        mHeaderView  = new OriginPicTextHeaderView(WeiboDataActivity.this,mStatus,"comments");
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        mHeaderView.setLayoutParams(layoutParams);
+        ((OriginPicTextHeaderView)mHeaderView).setWeiboDataClickLinstener(mWeiboDataClickLinstener);
+        mMap = new HashMap<>();
+        mMap.put("access_token", AccessTokenKeeper.readAccessToken(
+                this).getToken());
+        mWeiboId = String.valueOf(mStatus.getId());
+        mMap.put("id",mWeiboId);
+        mMap.put("page","1");
+        mMap.put("count","10");
+
+        mRecyclerView.addOnScrollListener(new EndLessOnScrollListener(mLayoutManager,WeiboDataActivity.this) {
+            @Override
+            public void onLoadMore() {
+                getData();
+            }
+        });
     }
 
 
     public void getData() {
-        mStatus = (Status) getIntent().getSerializableExtra("weiboitem");
-        mMap = new HashMap<>();
-        mMap.put("access_token", AccessTokenKeeper.readAccessToken(
-                this).getToken());
-        mMap.put("id",String.valueOf(mStatus.getId()));
-        new CommentsTask(this).execute(mMap);
+        new TimelineTask(this,"comments",mWeiboId).execute(mMap);
+
     }
+    private class DataRefreshLisenter implements SwipeRefreshLayout.OnRefreshListener{
+
+        @Override
+        public void onRefresh() {
+            isFirst = true;
+            getData();
+        }
+    }
+
 
     @Override
     public void getComments(List<Comments> list) {
-        mAdapter = new CommentsAdapter(WeiboDataActivity.this,list);
-        mWrapper = new HeaderAndFooterWrapper(mAdapter);
-        LinearLayout headerView  = new OriginPicTextHeaderView(WeiboDataActivity.this,mStatus,"comments");
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        headerView.setLayoutParams(layoutParams);
-        ((OriginPicTextHeaderView)headerView).setWeiboDataClickLinstener(mWeiboDataClickLinstener);
-        mWrapper.addHeaderView(headerView);
-        mRecyclerView.setAdapter(mWrapper);
+        if (isFirst) {
+            if (list!=null&&list.size()!=0)
+                mList = list;
+            mAdapter = new CommentsAdapter(WeiboDataActivity.this, list);
+            mWrapper = new HeaderAndFooterWrapper(mAdapter);
+            mWrapper.addHeaderView(mHeaderView);
+            mRecyclerView.setAdapter(mWrapper);
+            isFirst = false;
+            mSwipeRefreshLayout.setRefreshing(false);
+        }else {
+            if (list!=null){
+                if (mList==null)
+                    mList = list;
+                else
+                    mList.addAll(list);
+                mWrapper.notifyItemRangeInserted(mList.size()-list.size(), list.size());
+
+            }
+
+        }
     }
     public WeiboDataClickLinstener mWeiboDataClickLinstener = new WeiboDataClickLinstener() {
         @Override
         public void onComment() {
-            new CommentsTask(WeiboDataActivity.this).execute(mMap);
+            new TimelineTask(WeiboDataActivity.this,"comments",mWeiboId).execute(mMap);
         }
 
         @Override
@@ -84,19 +131,5 @@ public class WeiboDataActivity extends AppCompatActivity implements CommentsCall
 
         }
     };
-
-    private class CommentsTask extends AsyncTask<Map<String, String>, Integer, Comments> {
-        Context mContext;
-        public CommentsTask(Context context){
-            this.mContext = context;
-        }
-
-        @Override
-        protected Comments doInBackground(Map<String, String>[] maps) {
-            new CommentsModel(mContext).getComments(maps[0],"comments", WeiboDataActivity.this,mStatus.getIdstr());
-            return null;
-        }
-    }
-
 
 }

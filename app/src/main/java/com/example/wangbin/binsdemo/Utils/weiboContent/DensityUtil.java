@@ -1,4 +1,4 @@
-package com.example.wangbin.binsdemo.Utils;
+package com.example.wangbin.binsdemo.Utils.weiboContent;
 
 import android.content.Context;
 import android.util.TypedValue;

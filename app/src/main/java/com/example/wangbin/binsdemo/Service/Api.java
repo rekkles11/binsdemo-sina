@@ -34,6 +34,9 @@ public interface Api {
     @GET("statuses/public_timeline.json")
     Call<UserTimelineReponse> getPublicTimeline(@QueryMap Map<String ,String> options);
 
+    @GET("statuses/friends_timeline.json")
+    Call<UserTimelineReponse> getFriendsTimeline(@QueryMap Map<String,String> options);
+
     @GET("friendships/friends/ids.json")
     Observable<FriendsIds> getFriendsIds(@QueryMap Map<String,String> map);
 
@@ -50,5 +53,6 @@ public interface Api {
 
     @GET("comments/show.json")
     Call<Comment> getComments(@QueryMap Map<String,String> options);
+
 
 }

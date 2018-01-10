@@ -24,11 +24,11 @@ public class Comment implements Serializable{
 
     @SerializedName("previous_cursor")
     @Expose
-    private int previousCursor;
+    private Long previousCursor;
 
     @SerializedName("next_cursor")
     @Expose
-    private int nextCursor;
+    private Long nextCursor;
 
     @SerializedName("total_number")
     @Expose
@@ -36,11 +36,11 @@ public class Comment implements Serializable{
 
     @SerializedName("since_id")
     @Expose
-    private int sinceId;
+    private Long sinceId;
 
     @SerializedName("max_id")
     @Expose
-    private int maxId;
+    private Long maxId;
 
     @SerializedName("status")
     @Expose
@@ -71,19 +71,19 @@ public class Comment implements Serializable{
         return hasvisible;
     }
 
-    public int getPreviousCursor() {
+    public Long getPreviousCursor() {
         return previousCursor;
     }
 
-    public void setPreviousCursor(int previousCursor) {
+    public void setPreviousCursor(Long previousCursor) {
         this.previousCursor = previousCursor;
     }
 
-    public int getNextCursor() {
+    public Long getNextCursor() {
         return nextCursor;
     }
 
-    public void setNextCursor(int nextCursor) {
+    public void setNextCursor(Long nextCursor) {
         this.nextCursor = nextCursor;
     }
 
@@ -95,19 +95,19 @@ public class Comment implements Serializable{
         this.totalNumber = totalNumber;
     }
 
-    public int getSinceId() {
+    public Long getSinceId() {
         return sinceId;
     }
 
-    public void setSinceId(int sinceId) {
+    public void setSinceId(Long sinceId) {
         this.sinceId = sinceId;
     }
 
-    public int getMaxId() {
+    public Long getMaxId() {
         return maxId;
     }
 
-    public void setMaxId(int maxId) {
+    public void setMaxId(Long maxId) {
         this.maxId = maxId;
     }
 

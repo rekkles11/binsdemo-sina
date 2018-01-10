@@ -1,4 +1,4 @@
-package com.example.wangbin.binsdemo.Utils;
+package com.example.wangbin.binsdemo.Utils.Image;
 
 import com.example.wangbin.binsdemo.Entity.PicUrl;
 

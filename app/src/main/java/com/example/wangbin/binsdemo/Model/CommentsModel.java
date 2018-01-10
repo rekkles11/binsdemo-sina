@@ -40,13 +40,16 @@ public class CommentsModel {
             public void onResponse(Call<Comment> call, Response<Comment> response) {
                 if (response.code() ==200) {
                     mList = response.body().getComments();
-                    callBack.getComments(mList);
+                    for (int i = 0; i < mList.size(); i++) {
+                        String createdAt = mList.get(i).getCreatedAt();
+                        if (!createdAt.equals("")) {
+                            mList.get(i).setCreatedAt(getcreatedAt(createdAt));
+                        }
+                    }
                     saveToDB(apiStr);
-                }else {
-                    mList = new OrderDao(mContext).getCommets(
-                            apiStr,weiboId,Comments.class);
-
-                }
+                }else
+                    mList = new OrderDao(mContext).getAllData(apiStr,weiboId,Comments.class);
+                callBack.getComments(mList);
             }
 
             @Override
@@ -54,6 +57,11 @@ public class CommentsModel {
 
             }
         });
+    }
+
+    public String  getcreatedAt(String createdAt){
+        int index = createdAt.indexOf(" ")+1;
+        return createdAt.substring(index,index +3)+"-"+createdAt.substring(index+4,index+6)+"   ";
     }
 
     public void saveToDB(String apiStr){
@@ -64,6 +72,7 @@ public class CommentsModel {
             contentValues.put("Id", comments.getId());
             contentValues.put("json", new GsonConverter().getJson(comments));
             contentValues.put("types",apiStr );
+            contentValues.put("weiboId",comments.getStatus().getIdstr());
 
             dao.insert(OrderDBHelper.TABLE_NAME, contentValues,String.valueOf(comments.getId()));
 

@@ -77,22 +77,21 @@
 
         <FrameLayout
             android:id="@+id/fram_palyer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/black">
+            android:layout_width="240dp"
+            android:layout_height="150dp"
+            android:background="@drawable/video_background">
 
             <TextureView
                 android:id="@+id/view_exoplayer"
                 android:layout_width="240dp"
-                android:layout_height="150dp" />
+                android:layout_height="150dp"/>
 
             <ImageView
                 android:id="@+id/img_pause"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_gravity="center"
-                android:src="@drawable/video_pause"
-                android:visibility="gone" />
+                android:src="@drawable/video_pause" />
         </FrameLayout>
 
         <View
@@ -106,12 +105,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:orientation="horizontal">
-
-
-            <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="1">-->
 
             <LinearLayout
                 android:layout_width="match_parent"

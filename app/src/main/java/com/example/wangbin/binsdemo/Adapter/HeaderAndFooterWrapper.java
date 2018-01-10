@@ -23,6 +23,9 @@ public class HeaderAndFooterWrapper extends RecyclerView.Adapter<RecyclerView.Vi
     public HeaderAndFooterWrapper(RecyclerView.Adapter adapter){
         mInnerAdapter = adapter;
     }
+    public HeaderAndFooterWrapper(){
+
+    }
 
     private boolean isHeadViewPos(int position){
         return position < getHeadersCount();

@@ -14,16 +14,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.wangbin.binsdemo.Activity.UserTimeLineActivity;
-import com.example.wangbin.binsdemo.Entity.Status;
 import com.example.wangbin.binsdemo.Entity.User;
 import com.example.wangbin.binsdemo.Model.UserCallBack;
 import com.example.wangbin.binsdemo.Model.UserModel;
 import com.example.wangbin.binsdemo.R;
-import com.example.wangbin.binsdemo.Utils.GlideLoader;
+import com.example.wangbin.binsdemo.Utils.Image.GlideLoader;
 import com.sina.weibo.sdk.auth.AccessTokenKeeper;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -111,7 +109,9 @@ public class MyselfFragment extends Fragment implements UserCallBack,View.OnClic
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.yyweibo_layout:
-                startActivity(new Intent(mContext, UserTimeLineActivity.class));
+                Intent intent = new Intent(mContext, UserTimeLineActivity.class);
+                intent.putExtra("name","usertimeline");
+                startActivity(intent);
                 break;
             default:
                 break;

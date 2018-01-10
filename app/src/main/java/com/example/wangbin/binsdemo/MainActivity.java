@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.example.wangbin.binsdemo.Activity.FriendsIdsActivity;
-import com.example.wangbin.binsdemo.Activity.PublicTimelineActivity;
+import com.example.wangbin.binsdemo.Activity.HomeActivity;
 import com.example.wangbin.binsdemo.Activity.ShareActivity;
 import com.example.wangbin.binsdemo.Activity.TestActivity;
 import com.example.wangbin.binsdemo.Activity.UserTimeLineActivity;
@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void gotoActivity() {
         if (AccessTokenKeeper.readAccessToken(MainActivity.this).getToken()!=""){
-            startActivity(new Intent(MainActivity.this,UserTimeLineActivity.class));
+            startActivity(new Intent(MainActivity.this,HomeActivity.class));
         }else{
             starSsoAuthActivity();
         }
@@ -66,7 +66,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(MainActivity.this, ShareActivity.class));
                 break;
             case R.id.btn_publictimeline:
-                startActivity(new Intent(MainActivity.this, PublicTimelineActivity.class));
                 break;
             case R.id.bt_image:
                 startActivity(new Intent(MainActivity.this, TestActivity.class));

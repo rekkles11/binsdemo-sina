@@ -9,8 +9,7 @@ import android.widget.ImageView;
 
 import com.example.wangbin.binsdemo.Entity.PicUrl;
 import com.example.wangbin.binsdemo.R;
-import com.example.wangbin.binsdemo.Utils.GlideLoader;
-import com.github.lisicnu.log4android.LogManager;
+import com.example.wangbin.binsdemo.Utils.Image.GlideLoader;
 
 import java.util.List;
 
@@ -72,7 +71,7 @@ public class GridAdapter extends BaseAdapter{
                     viewHolder.deleteImg.setVisibility(View.VISIBLE);
                     viewHolder.deleteImg.setOnClickListener(new DeleteClickListener(position));
                 }
-            }else if(mList.size() == position&&mList.size()>0){
+            }else if(mList.size() == position){
                 if(isShare) {
                     new GlideLoader().displayNormalImg(mContext,R.drawable.more_img,
                             height, height, viewHolder.imageView);

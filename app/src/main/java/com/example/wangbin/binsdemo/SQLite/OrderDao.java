@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+import com.example.wangbin.binsdemo.Entity.Comment;
+import com.example.wangbin.binsdemo.Entity.Comments;
 import com.example.wangbin.binsdemo.Entity.Status;
 import com.example.wangbin.binsdemo.Entity.User;
 import com.example.wangbin.binsdemo.Utils.GsonConverter;
@@ -23,21 +25,7 @@ public class OrderDao extends BaseDao{
         super(new OrderDBHelper(context));
     }
 
-    public boolean isDataExist(){
-        int count = 0;
-        begintTransByRead();
-        Cursor cursor = db.query(OrderDBHelper.TABLE_NAME,new String[]{"COUNT(id)"},
-                null,null,null,null,null);
-        if(cursor.moveToFirst()){
-            count = cursor.getInt(0);
-        }
-        if (count>0)
-            return true;
 
-        closeCursor();
-        commit();
-        return false;
-    }
     public void insert(String name ,ContentValues contentValues,String id){
         if (!idIsExist(id)) {
             beiginTransByWrite();
@@ -51,30 +39,18 @@ public class OrderDao extends BaseDao{
     }
 
 
-    public List<Status> getAllData(String types){
-        List<Status> list = null;
-        begintTransByRead();
-        mCursor = db.query(OrderDBHelper.TABLE_NAME,ORDER_COLUMNS,"types = ?",new String[]{types},null,null,null);
-        if(mCursor.getCount()>0){
-            list = new ArrayList<>();
-            int count = mCursor.getCount();
-            GsonConverter gsonConverter = new GsonConverter<Status>();
-            while (mCursor.moveToNext()){
-                String str = mCursor.getString(mCursor.getColumnIndex("json"));
-                list.add(gsonConverter.getObject(str,Status.class));
-            }
-            LogManager.d("successful",count);
-        }else {
-            LogManager.d("error","error");
-        }
-        closeCursor();
-        commit();
-        return list;
-    }
-    public <T> List<T> getCommets(String weiboId,String type, Class<T> cla){
+    public <T> List<T> getAllData(String type,String weiboId, Class<T> cla){
         List<T> list = new ArrayList<>();
         begintTransByRead();
-        mCursor = db.query(OrderDBHelper.TABLE_NAME,ORDER_COLUMNS,"types = ? AND weiboId =?",new String[]{type,weiboId},null,null,null);
+        if (weiboId != null)
+            mCursor = db.query(OrderDBHelper.TABLE_NAME,ORDER_COLUMNS,
+                    "types = ? AND weiboId =?",new String[]{type,weiboId},
+                    null,null,null);
+        else
+            mCursor = db.query(OrderDBHelper.TABLE_NAME,ORDER_COLUMNS,
+                    "types = ?",new String[]{type},
+                    null,null,null);
+
         if(mCursor.getCount()>0){
             int count = mCursor.getCount();
             GsonConverter gsonConverter = new GsonConverter<Status>();
@@ -91,8 +67,8 @@ public class OrderDao extends BaseDao{
 
         return list;
     }
-    public User getUserData(String type){
-        User user = null;
+    public <T> T getData(String type,Class<T> cla){
+        T t = null;
         begintTransByRead();
         mCursor = db.query(OrderDBHelper.TABLE_NAME,ORDER_COLUMNS,"types = ?",new String[]{type},null,null,null);
         if(mCursor.getCount()>0){
@@ -100,7 +76,7 @@ public class OrderDao extends BaseDao{
             GsonConverter gsonConverter = new GsonConverter<Status>();
             while (mCursor.moveToNext()){
                 String str = mCursor.getString(mCursor.getColumnIndex("json"));
-                user = gsonConverter.getObject(str,User.class);
+                t = gsonConverter.getObject(str,cla);
             }
             LogManager.d("successful",count);
         }else {
@@ -108,7 +84,7 @@ public class OrderDao extends BaseDao{
         }
         closeCursor();
         commit();
-        return user;
+        return t;
     }
     public Boolean idIsExist(String id){
         begintTransByRead();
