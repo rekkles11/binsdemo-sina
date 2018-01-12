@@ -6,5 +6,5 @@ package com.example.wangbin.binsdemo.Utils;
  */
 
 public interface VideoCallBack {
-    void isPlay(int postion);
+    void isPlay(int postion,int perpostion);
 }

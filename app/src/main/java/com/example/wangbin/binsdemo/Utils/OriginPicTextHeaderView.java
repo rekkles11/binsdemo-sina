@@ -2,6 +2,8 @@ package com.example.wangbin.binsdemo.Utils;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.net.Uri;
+import android.view.TextureView;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -35,15 +37,19 @@ public class OriginPicTextHeaderView extends LinearLayout {
     TextView create_at;
     TextView weibo_content;
     MyGridView myGridView;
+    TextureView mTextureView;
+    ImageView mPauseImg;
     FrameLayout playerView;
     TextView reports;
     TextView comments;
     TextView attltudes;
     TextView commentView;
-    TextView retweetView;
+//    TextView retweetView;
     TextView likeView;
     ImageView mCommentIndicator;
-    ImageView mRetweetIndicator;
+//    ImageView mRetweetIndicator;
+    LinearLayout mLinearLayout;
+    public ExoPlayerInstance mInstance;
 
     WeiboDataClickLinstener mWeiboDataClickLinstener;
 
@@ -68,16 +74,21 @@ public class OriginPicTextHeaderView extends LinearLayout {
         screen_name = (TextView) mView.findViewById(R.id.tv_usertimeline_screen_name);
         create_at = (TextView) mView.findViewById(R.id.tv_usertimeline_created_at);
         weibo_content = (TextView) mView.findViewById(R.id.tv_text);
+        mLinearLayout = (LinearLayout) mView.findViewById(R.id.layout_weibo_bottom);
         myGridView = (MyGridView) mView.findViewById(R.id.grid_usertimeline_pic_ids);
-        playerView = (FrameLayout)findViewById(R.id.fram_palyer);
+        playerView = (FrameLayout)mView.findViewById(R.id.fram_palyer);
+        mTextureView = (TextureView) mView.findViewById(R.id.view_exoplayer);
+        mPauseImg = (ImageView) mView.findViewById(R.id.img_pause);
         reports = (TextView) mView.findViewById(R.id.tv_reposts);
         comments = (TextView) mView.findViewById(R.id.tv_comments);
         attltudes = (TextView) mView.findViewById(R.id.tv_attltudes);
         commentView = (TextView) mView.findViewById(R.id.commentBar_comment);
-        retweetView = (TextView) mView.findViewById(R.id.commentBar_retweet);
+//        retweetView = (TextView) mView.findViewById(R.id.commentBar_retweet);
         likeView = (TextView) mView.findViewById(R.id.commentBar_like);
         mCommentIndicator = (ImageView) findViewById(R.id.comment_indicator);
-        mRetweetIndicator = (ImageView) findViewById(R.id.retweet_indicator);
+//        mRetweetIndicator = (ImageView) findViewById(R.id.retweet_indicator);
+
+        mLinearLayout.setVisibility(GONE);
         initWeiBoContent(context, status);
 
 
@@ -95,27 +106,36 @@ public class OriginPicTextHeaderView extends LinearLayout {
         create_at.setText(status.getCreatedAt());
         weibo_content.setText(new WeiBoContentTextUtil().getWeiBoContent(status.getText()
                 ,mContext,weibo_content));
-        retweetView.setText("转发  "+String.valueOf(status.getRepostsCount()));
+//        retweetView.setText("转发  "+String.valueOf(status.getRepostsCount()));
         commentView.setText("评论  "+String.valueOf(status.getCommentsCount()));
         likeView.setText("赞  "+String.valueOf(status.getAttitudesCount()));
         List<PicUrl> picUrls =  status.getPicUrls();
-        if (picUrls.size()!=0||picUrls!= null) {
+        if (picUrls.size()!=0&&picUrls!= null) {
             myGridView.setVisibility(View.VISIBLE);
+            playerView.setVisibility(View.GONE);
             int width = (int) getResources().getDisplayMetrics().widthPixels;
             myGridView.setColumn(picUrls.size(), width);
             myGridView.setAdapter(new GridAdapter(mContext, picUrls, myGridView.getOneItemWidth(), false));
+        }else {
+            myGridView.setVisibility(View.GONE);
+            playerView.setVisibility(View.VISIBLE);
+            mInstance  = ExoPlayerInstance.getInstance(mContext.getApplicationContext());
+            Uri playerUri = Uri.parse("https://storage.googleapis.com/android-tv/Sample%20videos/Demo%20Slam/Google%20Demo%20Slam_%20Hangin'%20with%20the%20Google%20Search%20Bar.mp4");
+            mInstance.getPlayer();
+            mInstance.setmExoPlayer(playerUri, mTextureView, false, mPauseImg);
+
+
         }
-        playerView.setVisibility(View.GONE);
 
-        retweetView.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LogManager.d("resports:::","click");
-                resportLight();
-                mWeiboDataClickLinstener.onResport();
-
-            }
-        });
+//        retweetView.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                LogManager.d("resports:::","click");
+//                resportLight();
+//                mWeiboDataClickLinstener.onResport();
+//
+//            }
+//        });
 
 
 
@@ -131,16 +151,18 @@ public class OriginPicTextHeaderView extends LinearLayout {
 
     private void commentLight() {
         commentView.setTextColor(Color.parseColor("#000000"));
-        mCommentIndicator.setVisibility(View.VISIBLE);
-        retweetView.setTextColor(Color.parseColor("#828282"));
-        mRetweetIndicator.setVisibility(View.INVISIBLE);
+        mCommentIndicator.setVisibility(View.INVISIBLE);
+//        retweetView.setTextColor(Color.parseColor("#828282"));
+//        mRetweetIndicator.setVisibility(View.INVISIBLE);
     }
 
     private void resportLight() {
-        retweetView.setTextColor(Color.parseColor("#000000"));
-        mRetweetIndicator.setVisibility(View.VISIBLE);
+//        retweetView.setTextColor(Color.parseColor("#000000"));
+//        mRetweetIndicator.setVisibility(View.VISIBLE);
         commentView.setTextColor(Color.parseColor("#828282"));
         mCommentIndicator.setVisibility(View.INVISIBLE);
     }
+
+
 
 }

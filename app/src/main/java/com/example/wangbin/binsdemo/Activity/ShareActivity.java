@@ -23,6 +23,7 @@ import com.example.wangbin.binsdemo.Model.ShareCallBack;
 import com.example.wangbin.binsdemo.Model.ShareModel;
 import com.example.wangbin.binsdemo.R;
 import com.example.wangbin.binsdemo.Utils.Image.GlideLoader;
+import com.example.wangbin.binsdemo.Utils.TimelineTask;
 import com.sina.weibo.sdk.auth.AccessTokenKeeper;
 import com.yancy.imageselector.ImageConfig;
 import com.yancy.imageselector.ImageSelector;
@@ -48,6 +49,7 @@ public class ShareActivity extends AppCompatActivity implements ShareCallBack {
     private ArrayList<String> paths = new ArrayList<>();
     List<PicUrl> mList =new ArrayList<>();
     GridAdapter mAdapter;
+    Map<String, String> mMap = new HashMap<>();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,33 +87,10 @@ public class ShareActivity extends AppCompatActivity implements ShareCallBack {
 
     }
 
-    private void postShare() {
-        ShareModel shareModel = new ShareModel();
-        Map<String, MultipartBody.Part> partMap = new HashMap<>();
-        Map<String, String> map = new HashMap<>();
-        map.put("access_token", AccessTokenKeeper.readAccessToken(ShareActivity.this).getToken());
-        map.put("status", mEditText.getText().toString() + "        http://www.baidu.com");
-        //"access_token" -> "2.00tWqpvDKQ8YQB16c58355ef0jh2_B"
-        if(mFiles == null) {
-            shareModel.postShare(map, null,ShareActivity.this);
-        }else {
-            shareModel.postShare(map,mFiles,ShareActivity.this);
-        }
-    }
-
     @Override
     public void isPostSuccessful(Boolean bool) {
         if (bool)
             finish();
-    }
-
-    public class ShareTask extends AsyncTask<Integer,Integer,Object>{
-
-        @Override
-        protected Object doInBackground(Integer... integers) {
-            postShare();
-            return null;
-        }
     }
 
     @Override
@@ -141,22 +120,6 @@ public class ShareActivity extends AppCompatActivity implements ShareCallBack {
         }
     }
 
-    //Uri转File
-    public File UriToFile(Uri uri) {
-        String res = null;
-        String[] pojo = {MediaStore.Images.Media.DATA};
-        Cursor cursor = getContentResolver().query(uri, pojo, null, null, null);
-        if (cursor!= null) {
-            cursor.moveToFirst();
-            int colum_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            res = cursor.getString(colum_index);
-            cursor.close();
-
-        }else
-            res =uri.getPath();
-        return new File(res);
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_postimg,menu);
@@ -171,11 +134,17 @@ public class ShareActivity extends AppCompatActivity implements ShareCallBack {
         }
         switch (item.getItemId()){
             case R.id.post_img:
-                new ShareTask().execute(0);
+                initData();
+                new TimelineTask(ShareActivity.this,"share",mFiles).execute(mMap);
                 setResult(RESULT_OK);
             default:
                 break;
         }
         return true;
+    }
+
+    private void initData() {
+        mMap.put("access_token", AccessTokenKeeper.readAccessToken(ShareActivity.this).getToken());
+        mMap.put("status", mEditText.getText().toString() + "        http://www.baidu.com");
     }
 }

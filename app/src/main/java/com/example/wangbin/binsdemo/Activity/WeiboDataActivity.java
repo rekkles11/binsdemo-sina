@@ -15,7 +15,6 @@ import com.example.wangbin.binsdemo.Adapter.CommentsAdapter;
 import com.example.wangbin.binsdemo.Entity.Comments;
 import com.example.wangbin.binsdemo.Entity.Status;
 import com.example.wangbin.binsdemo.Model.CommentsCallBack;
-import com.example.wangbin.binsdemo.Model.CommentsModel;
 import com.example.wangbin.binsdemo.R;
 import com.example.wangbin.binsdemo.Utils.EndLessOnScrollListener;
 import com.example.wangbin.binsdemo.Utils.OriginPicTextHeaderView;
@@ -44,11 +43,13 @@ public class WeiboDataActivity extends AppCompatActivity implements CommentsCall
     private LinearLayout mHeaderView;
     private Boolean isFirst = true;
     private List<Comments> mList;
+    private EndLessOnScrollListener mScrollListener;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weibodata);
+        getSupportActionBar().setTitle("微博详情");
         initView();
         getData();
     }
@@ -72,13 +73,13 @@ public class WeiboDataActivity extends AppCompatActivity implements CommentsCall
         mMap.put("id",mWeiboId);
         mMap.put("page","1");
         mMap.put("count","10");
-
-        mRecyclerView.addOnScrollListener(new EndLessOnScrollListener(mLayoutManager,WeiboDataActivity.this) {
+        mScrollListener = new EndLessOnScrollListener(WeiboDataActivity.this) {
             @Override
             public void onLoadMore() {
                 getData();
             }
-        });
+        };
+        mRecyclerView.addOnScrollListener(mScrollListener);
     }
 
 
@@ -118,6 +119,7 @@ public class WeiboDataActivity extends AppCompatActivity implements CommentsCall
             }
 
         }
+        ((OriginPicTextHeaderView)mHeaderView).mInstance.getPlayer().setPlayWhenReady(true);
     }
     public WeiboDataClickLinstener mWeiboDataClickLinstener = new WeiboDataClickLinstener() {
         @Override
@@ -132,4 +134,9 @@ public class WeiboDataActivity extends AppCompatActivity implements CommentsCall
         }
     };
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        ((OriginPicTextHeaderView)mHeaderView).mInstance.releasePlayer();
+    }
 }

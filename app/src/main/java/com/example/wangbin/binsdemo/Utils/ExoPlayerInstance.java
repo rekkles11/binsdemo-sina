@@ -1,19 +1,15 @@
 package com.example.wangbin.binsdemo.Utils;
 
 import android.content.Context;
-import android.graphics.SurfaceTexture;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.view.TextureView;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 
 import com.example.wangbin.binsdemo.R;
 import com.github.lisicnu.log4android.LogManager;
-import com.github.lisicnu.log4android.Logger;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -38,13 +34,8 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
-import com.google.android.exoplayer2.upstream.cache.NoOpCacheEvictor;
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.google.android.exoplayer2.util.Util;
-
-import java.io.File;
-import java.net.URL;
-
 /**
  * Created by momo on 2017/12/29.
  */
@@ -53,8 +44,6 @@ public class ExoPlayerInstance {
     private static volatile ExoPlayerInstance mInstance;
     private SimpleExoPlayer mPlayer = null;
     private Context mContext;
-    private TextureView mTextureView;
-    private ImageView mImageView;
     private Animation mAnimation;
     private  ExoPlayerInstance(Context context) {
         this.mContext = context;
@@ -89,13 +78,10 @@ public class ExoPlayerInstance {
         try {
 
             if (mPlayer != null) {
+                mPlayer.stop();
                 mPlayer.release();
                 mPlayer = null;
             }
-            if (mTextureView!=null)
-                mTextureView = null;
-            if (mImageView!=null)
-                mImageView = null;
             if (mAnimation!=null){
                 mAnimation.cancel();
                 mAnimation = null;
@@ -105,10 +91,9 @@ public class ExoPlayerInstance {
         }
     }
 
-    public void setmExoPlayer(Uri uri, final TextureView textureView, Boolean isPlay,
+
+    public void setmExoPlayer(Uri uri, final TextureView textureView, final Boolean isPlay,
                               final ImageView imageView) {
-        mTextureView = textureView;
-        mImageView = imageView;
         mPlayer.setVideoTextureView(textureView);
 
         DefaultBandwidthMeter defaultBandwidthMeter = new DefaultBandwidthMeter();
@@ -128,35 +113,6 @@ public class ExoPlayerInstance {
 
         mPlayer.prepare(videoSource);
         mPlayer.setPlayWhenReady(isPlay);
-
-
-        textureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
-            @Override
-            public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-
-
-                LogManager.d("exoplayerlistener:::", "onSurfaceTextureAvailable");
-            }
-
-            @Override
-            public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-                LogManager.d("exoplayerlistener:::", "onSurfaceTextureSizeChanged");
-
-            }
-
-            @Override
-            public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-                LogManager.d("exoplayerlistener:::", "onSurfaceTextureDestroyed");
-                imageView.setImageResource(R.drawable.video_pause);
-                imageView.setVisibility(View.VISIBLE);
-                return false;
-            }
-
-            @Override
-            public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-
-            }
-        });
         mPlayer.addListener(new ExoPlayer.EventListener() {
             @Override
             public void onTimelineChanged(Timeline timeline, Object manifest) {
@@ -170,16 +126,11 @@ public class ExoPlayerInstance {
 
             @Override
             public void onLoadingChanged(boolean isLoading) {
-                LogManager.d("exoplayerlistener:::", "loadingchange");
 
             }
 
             @Override
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-                if (!playWhenReady) {
-                    imageView.setImageResource(R.drawable.video_pause);
-                    imageView.setVisibility(View.VISIBLE);
-                }
 
                 switch (playbackState) {
                     case ExoPlayer.STATE_IDLE:
@@ -188,10 +139,12 @@ public class ExoPlayerInstance {
                     case ExoPlayer.STATE_READY:
                         LogManager.d("exoplayerlistener:::", "palyerstatechange+ready");
                         imageView.clearAnimation();
+                        imageView.setImageResource(R.drawable.video_pause);
                         imageView.setVisibility(View.GONE);
                         break;
                     case ExoPlayer.STATE_ENDED:
                         LogManager.d("exoplayerlistener:::", "palyerstatechange+ended");
+                        mPlayer.seekTo(0);
                         imageView.setImageResource(R.drawable.video_pause);
                         imageView.setVisibility(View.VISIBLE);
                         break;
@@ -205,7 +158,6 @@ public class ExoPlayerInstance {
                     default:
                         break;
                 }
-
             }
 
             @Override
@@ -220,4 +172,6 @@ public class ExoPlayerInstance {
         });
 
     }
+
+
 }

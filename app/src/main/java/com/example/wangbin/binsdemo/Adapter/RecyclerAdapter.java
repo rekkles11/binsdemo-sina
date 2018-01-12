@@ -2,7 +2,6 @@ package com.example.wangbin.binsdemo.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.TextureView;
@@ -19,7 +18,6 @@ import com.example.wangbin.binsdemo.Activity.WeiboDataActivity;
 import com.example.wangbin.binsdemo.Entity.PicUrl;
 import com.example.wangbin.binsdemo.Entity.Status;
 import com.example.wangbin.binsdemo.R;
-import com.example.wangbin.binsdemo.Utils.ExoPlayerInstance;
 import com.example.wangbin.binsdemo.Utils.Image.GlideLoader;
 import com.example.wangbin.binsdemo.Utils.MyGridView;
 import com.example.wangbin.binsdemo.Utils.Image.PicSize;
@@ -39,7 +37,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     int width;
     List<ImageView> mImageViews = new ArrayList<>();
 
-    public RecyclerAdapter(List<Status> list, Context context,int x){
+    public RecyclerAdapter(List<Status> list, Context context, int x) {
         this.mList = list;
         this.mContext = context;
         this.width = x;
@@ -47,7 +45,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.usertimeline_item,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.usertimeline_item, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
         return viewHolder;
     }
@@ -55,7 +53,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         Status status = mList.get(position);
-        holder.text.setText(new WeiBoContentTextUtil().getWeiBoContent(status.getText(),mContext,holder.text));
+        holder.text.setText(new WeiBoContentTextUtil().getWeiBoContent(status.getText(), mContext, holder.text));
         holder.reposts.setText(status.getRepostsCount().toString());
         holder.comments.setText(status.getCommentsCount().toString());
         holder.attltudes.setText(status.getAttitudesCount().toString());
@@ -64,14 +62,13 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         holder.screenName.setText(status.getUser().getScreenName());
         holder.weiboLayout.setOnClickListener(new ClickLinsetener(status));
         mImageViews.add(holder.imageView);
-        new GlideLoader().displayCircleImg(mContext,status.getUser().getAvatarLarge(),
-                width/5,width/5,holder.imageView);
-        if (status.getPicUrls().size()==0||status.getPicUrls() == null) {
+        new GlideLoader().displayCircleImg(mContext, status.getUser().getAvatarLarge(),
+                width / 5, width / 5, holder.imageView);
+        if (status.getPicUrls().size() == 0 || status.getPicUrls() == null) {
             holder.gridView.setVisibility(View.GONE);
             holder.frameLayout.setVisibility(View.VISIBLE);
-            holder.pauseView.setVisibility(View.VISIBLE);
-        }
-        else {
+
+        } else {
             holder.frameLayout.setVisibility(View.GONE);
             holder.gridView.setVisibility(View.VISIBLE);
             if (status.getPicUrls() != null) {
@@ -83,25 +80,27 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         }
 
     }
+
+
     private class ClickLinsetener implements View.OnClickListener {
         Status mStatus;
-        ClickLinsetener(Status status){
+
+        ClickLinsetener(Status status) {
             this.mStatus = status;
         }
 
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(mContext, WeiboDataActivity.class);
-            intent.putExtra("weiboitem",mStatus);
+            intent.putExtra("weiboitem", mStatus);
             mContext.startActivity(intent);
         }
     }
 
-    public void setGridView(List<PicUrl> picUrls,MyGridView view) {
-        view.setColumn(picUrls.size(),width);
-        view.setAdapter(new GridAdapter(mContext,picUrls,view.getOneItemWidth(),false));
+    public void setGridView(List<PicUrl> picUrls, MyGridView view) {
+        view.setColumn(picUrls.size(), width);
+        view.setAdapter(new GridAdapter(mContext, picUrls, view.getOneItemWidth(), false));
     }
-
 
 
     @Override
@@ -110,7 +109,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     }
 
 
-    public static class ViewHolder extends  RecyclerView.ViewHolder{
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView text;
         public TextView reposts;
         public TextView comments;
@@ -124,6 +123,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         public ImageView pauseView;
         public FrameLayout frameLayout;
         public LinearLayout weiboLayout;
+
         public ViewHolder(View itemView) {
             super(itemView);
             text = (TextView) itemView.findViewById(R.id.tv_text);
@@ -146,21 +146,23 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
 
         int mHodlerPostion;
-        public GridItemClickListener(int pos){
+
+        public GridItemClickListener(int pos) {
             this.mHodlerPostion = pos;
         }
+
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Intent intent = new Intent(mContext,ImageActivity.class);
+            Intent intent = new Intent(mContext, ImageActivity.class);
 
             List<PicUrl> list = new PicSize().getLaragePicUrls(mList.get(mHodlerPostion).getPicUrls());
             String[] strings = new String[list.size()];
-            for (int i =0;i<list.size();i++){
+            for (int i = 0; i < list.size(); i++) {
                 strings[i] = list.get(i).getThumbnailPic();
             }
-            intent.putExtra("pics",strings);
-            intent.putExtra("index",position);
-            LogManager.d("index:::",position);
+            intent.putExtra("pics", strings);
+            intent.putExtra("index", position);
+            LogManager.d("index:::", position);
             mContext.startActivity(intent);
         }
     }

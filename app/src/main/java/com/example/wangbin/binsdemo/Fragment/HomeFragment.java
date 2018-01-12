@@ -2,6 +2,7 @@ package com.example.wangbin.binsdemo.Fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -40,7 +41,7 @@ import java.util.Map;
  * Created by momo on 2018/1/2.
  */
 
-public class HomeFragment extends Fragment implements UserTimelineCallBack,VideoCallBack{
+public class HomeFragment extends Fragment implements UserTimelineCallBack{
 
     Context mContext;
     public View mView;
@@ -53,10 +54,11 @@ public class HomeFragment extends Fragment implements UserTimelineCallBack,Video
     Boolean isFirst = true;
     SwipeRefreshLayout mSwipeRefreshLayout;
     View mHeaderView;
-    int playPostion =0;
     int mPage =1;
     public EndLessOnScrollListener mScrollListener;
     private RefreshListener mRefreshListener;
+    private String mFrom;
+    ExoPlayerInstance mInstance;
 
 
     @Nullable
@@ -78,48 +80,35 @@ public class HomeFragment extends Fragment implements UserTimelineCallBack,Video
         mRecyclerView = (RecyclerView) mView.findViewById(R.id.recycler_usertimeline);
         mLayoutManager = new LinearLayoutManager(mContext);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mScrollListener = new EndLessOnScrollListener(playPostion,mLayoutManager,mContext,HomeFragment.this,true) {
-            @Override
-            public void onLoadMore() {
-                LogManager.d("load:::::1",mWrapper.mInnerAdapter.getItemCount());
-                getUserTimeline(mPage);
-            }
-        };
-        mRecyclerView.addOnScrollListener(mScrollListener);
+        mFrom = getArguments().getString("comeFrom");
         map = new HashMap<>();
         map.put("access_token", AccessTokenKeeper.readAccessToken(mContext).getToken());
         map.put("count","10");
+        mInstance = ExoPlayerInstance.getInstance(mContext.getApplicationContext());
     }
     public void getUserTimeline(int page) {
-        LogManager.d("page1::",page);
         map.put("page", String.valueOf(page));
 //        加载下一页
 //        mPage++;
         WritePermission.verifystoragePermissons((Activity) mContext);
         try {
-            new TimelineTask(mContext,"friendstimeline").execute(map);
+            new TimelineTask(mContext,mFrom).execute(map);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    @Override
-    public void isPlay(int postion) {
-        this.playPostion = postion;
-        LogManager.d("explayer::",postion);
-        if(mList!=null&&(mList.get(postion).getPicUrls().size()==0||mList.get(postion).getPicUrls()== null)){
-            View view = mLayoutManager.findViewByPosition(postion);
-            final LinearLayout layout = (LinearLayout) view;
-            try {
-                TextureView textureView = (TextureView) layout.findViewById(R.id.view_exoplayer);
-                ImageView imageView = (ImageView) layout.findViewById(R.id.img_pause);
-                ExoPlayerInstance instance = ExoPlayerInstance.getInstance(mContext.getApplicationContext());
-                instance.getPlayer();
-                Uri playerUri = Uri.parse("https://storage.googleapis.com/android-tv/Sample%20videos/Demo%20Slam/Google%20Demo%20Slam_%20Hangin'%20with%20the%20Google%20Search%20Bar.mp4");
-                instance.setmExoPlayer(playerUri, textureView, true, imageView);
-            }catch (Exception e){
-                LogManager.d("isplay",e.getMessage());
-            }
-        }
+
+
+    /**
+     * 静态工厂方法需要一个int型的值来初始化fragment的参数，
+     * 然后返回新的fragment到调用者
+     */
+    public static HomeFragment newInstance(String from) {
+        HomeFragment homeFragment = new HomeFragment();
+        Bundle args = new Bundle();
+        args.putString("comeFrom", from);
+        homeFragment.setArguments(args);
+        return homeFragment;
     }
 
     @Override
@@ -127,7 +116,6 @@ public class HomeFragment extends Fragment implements UserTimelineCallBack,Video
         if (isFirst){
             if (list!=null&&list.size()!=0) {
                 mList = (list);
-                LogManager.d("list::::1",list.size());
                 int width = (int) getResources().getDisplayMetrics().widthPixels;
                 mAdapter = new RecyclerAdapter(mList,mContext, width);
                 mWrapper = new HeaderAndFooterWrapper(mAdapter);
@@ -142,6 +130,14 @@ public class HomeFragment extends Fragment implements UserTimelineCallBack,Video
             }
 
         }
+        mScrollListener = new EndLessOnScrollListener(mList,mContext,true) {
+            @Override
+            public void onLoadMore() {
+                getUserTimeline(mPage);
+            }
+        };
+        mRecyclerView.addOnScrollListener(mScrollListener);
+
     }
 
     class RefreshListener implements SwipeRefreshLayout.OnRefreshListener {
@@ -154,8 +150,8 @@ public class HomeFragment extends Fragment implements UserTimelineCallBack,Video
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ExoPlayerInstance.getInstance(mContext.getApplicationContext()).releasePlayer();
+    public void onPause() {
+        super.onPause();
+        mInstance.releasePlayer();
     }
 }

@@ -32,7 +32,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private HomeFragment mHomeFragment;
     private MyselfFragment mMySelfFragment;
     private MessageFragment mMessageFragment;
-    private DiscoveryFragment mDiscoveryFragment;
+//    private DiscoveryFragment mDiscoveryFragment;
+    private HomeFragment mDiscoveryFragment;
     private RelativeLayout mHomeTabRl;
     private RelativeLayout mMessageTabRl;
     private RelativeLayout mDiscoverTabRl;
@@ -149,7 +150,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private void showHomeFragment() {
         mHomeTabRl.setSelected(true);
         if (mHomeFragment == null) {
-            mHomeFragment = new HomeFragment();
+            mHomeFragment = HomeFragment.newInstance("friendstimeline");
             mTransaction.add(R.id.main_content_fl, mHomeFragment, TAB_HOME_FRAGMENT);
         } else {
             mTransaction.show(mHomeFragment);
@@ -192,12 +193,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     * 切换到发现模块
+     * 切换到热门模块
      */
     private void showDiscoveryFragment() {
         mDiscoverTabRl.setSelected(true);
         if (mDiscoveryFragment == null) {
-            mDiscoveryFragment = new DiscoveryFragment();
+//            mDiscoveryFragment = new DiscoveryFragment();
+            mDiscoveryFragment = HomeFragment.newInstance("publictimeline");
             mTransaction.add(R.id.main_content_fl, mDiscoveryFragment, TAB_DISCOVERY_FRAGMENT);
         } else {
             mTransaction.show(mDiscoveryFragment);
@@ -230,15 +232,5 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         mMessageTabRl.setSelected(false);
         mDiscoverTabRl.setSelected(false);
         mMySelfTabRl.setSelected(false);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        ExoPlayerInstance.getInstance(HomeActivity.this.getApplicationContext()).releasePlayer();
-        mHomeFragment = null;
-        mMessageFragment =null;
-        mDiscoveryFragment = null;
-        mMySelfFragment = null;
     }
 }

@@ -1,5 +1,6 @@
 package com.example.wangbin.binsdemo.Activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -41,8 +42,7 @@ import java.util.Map;
  * Created by momo on 2017/12/12.
  */
 
-public class UserTimeLineActivity extends AppCompatActivity  implements UserTimelineCallBack,
-        VideoCallBack{
+public class UserTimeLineActivity extends AppCompatActivity  implements UserTimelineCallBack{
     RecyclerView mRecyclerView;
     LinearLayoutManager mLayoutManager;
     RecyclerAdapter mAdapter;
@@ -52,9 +52,9 @@ public class UserTimeLineActivity extends AppCompatActivity  implements UserTime
     Boolean isFirst = true;
     SwipeRefreshLayout mSwipeRefreshLayout;
     View mHeaderView;
-    int playPostion =0;
     private String mName;
     private int mPage = 1;
+    private EndLessOnScrollListener mEndLessOnScrollListener;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -82,7 +82,6 @@ public class UserTimeLineActivity extends AppCompatActivity  implements UserTime
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_usertimeline);
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.addOnScrollListener(mEndLessOnScrollListener);
         mName = getIntent().getStringExtra("name");
         if (mName.equals("usertimeline"))
             getSupportActionBar().setTitle("微博");
@@ -117,40 +116,20 @@ public class UserTimeLineActivity extends AppCompatActivity  implements UserTime
             }
 
         }
+        mEndLessOnScrollListener = new EndLessOnScrollListener(mList, UserTimeLineActivity.this.getApplication(),false) {
+                    @Override
+                    public void onLoadMore() {
+                        getUserTimeline(mPage);
+                    }
+                };
+
+        mRecyclerView.addOnScrollListener(mEndLessOnScrollListener);
+
+
 
     }
 
-    public EndLessOnScrollListener mEndLessOnScrollListener =
-            new EndLessOnScrollListener(playPostion,mLayoutManager,UserTimeLineActivity.this,UserTimeLineActivity.this) {
-        @Override
-        public void onLoadMore() {
-            LogManager.d("load:::::1",mWrapper.mInnerAdapter.getItemCount());
-            getUserTimeline(mPage);
-        }
 
-
-    };
-
-
-    @Override
-    public void isPlay(int postion) {
-        this.playPostion = postion;
-        LogManager.d("explayer::",postion);
-        if(mList!=null&&(mList.get(postion).getPicUrls().size()==0||mList.get(postion).getPicUrls()== null)){
-            View view = mLayoutManager.findViewByPosition(postion);
-            LinearLayout layout = (LinearLayout) view;
-            try {
-            TextureView textureView = (TextureView) layout.findViewById(R.id.view_exoplayer);
-            ImageView imageView = (ImageView) layout.findViewById(R.id.img_pause);
-            ExoPlayerInstance instance = ExoPlayerInstance.getInstance(UserTimeLineActivity.this.getApplication());
-            instance.getPlayer();
-            Uri playerUri = Uri.parse("https://storage.googleapis.com/android-tv/Sample%20videos/Demo%20Slam/Google%20Demo%20Slam_%20Hangin'%20with%20the%20Google%20Search%20Bar.mp4");
-            instance.setmExoPlayer(playerUri, textureView, true,imageView);
-            }catch (Exception e){
-                LogManager.d("isplay",e.getMessage());
-            }
-            }
-    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main,menu);
@@ -193,9 +172,4 @@ public class UserTimeLineActivity extends AppCompatActivity  implements UserTime
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        ExoPlayerInstance.getInstance(UserTimeLineActivity.this.getApplication()).releasePlayer();
-    }
 }

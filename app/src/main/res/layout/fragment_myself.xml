@@ -157,7 +157,7 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <include layout="@layout/profilefragment_layout_moreline" />
+                <!--<include layout="@layout/profilefragment_layout_moreline" />-->
 
             </LinearLayout>
         </ScrollView>

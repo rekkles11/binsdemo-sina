@@ -2,14 +2,22 @@ package com.example.wangbin.binsdemo.Utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.net.Uri;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.view.TextureView;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.example.wangbin.binsdemo.Activity.HomeActivity;
+import com.example.wangbin.binsdemo.Entity.Status;
+import com.example.wangbin.binsdemo.R;
 import com.github.lisicnu.log4android.LogManager;
+
+import java.util.List;
 
 /**
  * Created by momo on 2017/12/22.
@@ -17,58 +25,44 @@ import com.github.lisicnu.log4android.LogManager;
 
 public abstract class EndLessOnScrollListener extends RecyclerView.OnScrollListener {
 
-    private LinearLayoutManager mLinearLayoutManager;
-    RecyclerView.LayoutManager mLayoutManager;
     //子item的总数
     private int totalItemCount;
-    //item显示的数量
-    private int visibleItemCount;
     //第一个显示的item位置
     private int firstVisibleItemPostion;
     //最后一个item的位置
     private int lastVisibleItemPosition;
-    private Boolean loading = false;
+    private Boolean loading = true;
     //记录滑动的距离
     int mScrolledDistance =0;
     Boolean mBarVisible = true;
 
     Context mContext;
-    VideoCallBack mVideoCallBack;
     int playPostion = 0;
     int perPostion;
-    Boolean isHome =false;
+    Boolean isHome;
+    Boolean isWeiboData;
+    private List<Status> mList;
 
     //普通的加载更多
-    public EndLessOnScrollListener( LinearLayoutManager linearLayoutManager, Context context) {
-        this.mLinearLayoutManager = linearLayoutManager;
+    public EndLessOnScrollListener( Context context) {
         this.mContext = context;
+        this.isWeiboData = true;
     }
     //带视频的加载更多
-    public EndLessOnScrollListener(int pos, LinearLayoutManager linearLayoutManager, Context context, VideoCallBack videoCallBack) {
-        this.mLinearLayoutManager = linearLayoutManager;
+    public EndLessOnScrollListener(List<Status> list, Context context, Boolean bool) {
         this.mContext = context;
-        mVideoCallBack = videoCallBack;
-        this.playPostion = pos;
-        this.perPostion = pos;
-    }
-    //来自HomeFragment判断是否隐藏bar
-    public EndLessOnScrollListener(int pos, LinearLayoutManager linearLayoutManager, Context context, VideoCallBack videoCallBack,Boolean bool) {
-        this.mLinearLayoutManager = linearLayoutManager;
-        this.mContext = context;
-        mVideoCallBack = videoCallBack;
-        this.playPostion = pos;
-        this.perPostion = pos;
-        isHome = bool;
+        this.mList = list;
+        this.isHome = bool;
     }
     @Override
     public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
         super.onScrolled(recyclerView, dx, dy);
-        mLayoutManager = recyclerView.getLayoutManager();
-        firstVisibleItemPostion = ((LinearLayoutManager) mLayoutManager).findFirstVisibleItemPosition();
-        lastVisibleItemPosition = ((LinearLayoutManager) mLayoutManager).findLastVisibleItemPosition();
-        View view = mLayoutManager.findViewByPosition(playPostion);
+        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+        firstVisibleItemPostion = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
+        lastVisibleItemPosition = ((LinearLayoutManager) layoutManager).findLastVisibleItemPosition();
+        View view = layoutManager.findViewByPosition(playPostion);
 
-        if (mVideoCallBack!=null) {
+        if (isHome!=null) {
             //判断视频的播放
             if (view != null) {
                 int height = view.getHeight();
@@ -82,13 +76,14 @@ public abstract class EndLessOnScrollListener extends RecyclerView.OnScrollListe
                     int screenHeight = dm.heightPixels;
                     if (y < 0) {
                         if ((height + y) * 10 / height < 4) {
-                            ExoPlayerInstance.getInstance(mContext.getApplicationContext()).releasePlayer();
                             playPostion++;
+                            LogManager.d("1playerpostion::",playPostion);
+                            finishVideo(layoutManager);
                         }
                     } else {
                         if ((screenHeight - y) * 10 / height < 4) {
-                            ExoPlayerInstance.getInstance(mContext.getApplicationContext()).releasePlayer();
                             playPostion--;
+                            finishVideo(layoutManager);
                         }
                     }
                 }
@@ -122,23 +117,82 @@ public abstract class EndLessOnScrollListener extends RecyclerView.OnScrollListe
     public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
         super.onScrollStateChanged(recyclerView, newState);
         RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-        visibleItemCount = layoutManager.getChildCount();
         totalItemCount = layoutManager.getItemCount();
         LogManager.d("21item.count::::", firstVisibleItemPostion + "+" + lastVisibleItemPosition + "+" + totalItemCount);
-        if (mVideoCallBack!=null) {
+
+        if (isHome!=null){
             LogManager.d("exoplayer:::", playPostion + "+" + perPostion);
             if (playPostion != perPostion || playPostion == 0 || playPostion < firstVisibleItemPostion) {
                 if (playPostion < firstVisibleItemPostion)
                     playPostion = firstVisibleItemPostion;
-                mVideoCallBack.isPlay(playPostion);
-                perPostion = playPostion;
+                startVideo(layoutManager);
             }
         }
+
+        //微博详情视频播放
+        if (isWeiboData!=null){
+
+            startVideo(layoutManager);
+        }
+
         if (newState == RecyclerView.SCROLL_STATE_IDLE &&
                 lastVisibleItemPosition >= (totalItemCount - 1)) {
             onLoadMore();
         }
 
+    }
+
+    private void startVideo(RecyclerView.LayoutManager manager){
+
+        try {
+            if (mList != null && mList.get(playPostion).getPicUrls().size() == 0||
+                    isWeiboData!=null&&firstVisibleItemPostion ==0) {
+                perPostion = playPostion;
+                LogManager.d("playerpostion:::",playPostion);
+                View view = manager.findViewByPosition(playPostion);
+
+                TextureView textureView;
+                ImageView imageView;
+                if (view!=null) {
+                    textureView = (TextureView) ((LinearLayout) view).findViewById(R.id.view_exoplayer);
+                    textureView.setVisibility(View.VISIBLE);
+                    imageView = (ImageView) ((LinearLayout) view).findViewById(R.id.img_pause);
+                    ExoPlayerInstance instance = ExoPlayerInstance.getInstance(mContext.getApplicationContext());
+                    instance.getPlayer();
+                    Uri playerUri = Uri.parse("https://storage.googleapis.com/android-tv/Sample%20videos/Demo%20Slam/Google%20Demo%20Slam_%20Hangin'%20with%20the%20Google%20Search%20Bar.mp4");
+                    instance.setmExoPlayer(playerUri, textureView, true, imageView);
+                    loading =true;
+                }
+            }
+        }catch (Exception e){
+            LogManager.d("isplay",e.getMessage());
+        }
+
+    }
+
+
+    private void finishVideo(RecyclerView.LayoutManager manager){
+        TextureView textureView;
+        ImageView imageView;
+        ExoPlayerInstance.getInstance(mContext).releasePlayer();
+        try {
+            if (loading) {
+                if (playPostion != 0 && playPostion != perPostion) {
+                    View perView = manager.findViewByPosition(perPostion);
+                    if (perView != null) {
+                        textureView = (TextureView) ((LinearLayout) perView).findViewById(R.id.view_exoplayer);
+                        textureView.setVisibility(View.GONE);
+                        imageView = (ImageView) ((LinearLayout) perView).findViewById(R.id.img_pause);
+                        imageView.setImageResource(R.drawable.video_pause);
+                        imageView.setVisibility(View.VISIBLE);
+                        loading = false;
+                    }
+                }
+
+            }
+        }catch (Exception e){
+            LogManager.d("isplay",e.getMessage());
+        }
     }
 
 

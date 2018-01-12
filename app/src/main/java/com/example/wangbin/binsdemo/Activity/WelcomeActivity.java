@@ -77,19 +77,6 @@ public class WelcomeActivity extends AppCompatActivity{
             }
         }
     }
-
-//    private static  Handler mHandler = new Handler(){
-//        @Override
-//        public void handleMessage(Message msg) {
-//            if (AccessTokenKeeper.readAccessToken(WelcomeActivity.this).getToken()!=""){
-//                startActivity(mStartIntent);
-//                finish();
-//            }else{
-//                starSsoAuthActivity();
-//            }
-//
-//        }
-//    };
     private void starSsoAuthActivity(){
         mSsoHandler = new SsoHandler(this);
         mSsoHandler.authorizeWeb(new SelfWbAuthListener(this, mStartIntent));
