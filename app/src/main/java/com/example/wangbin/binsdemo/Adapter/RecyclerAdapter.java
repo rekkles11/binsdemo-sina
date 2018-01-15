@@ -1,5 +1,6 @@
 package com.example.wangbin.binsdemo.Adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
@@ -7,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -35,7 +37,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     List<Status> mList;
     Context mContext;
     int width;
-    List<ImageView> mImageViews = new ArrayList<>();
 
     public RecyclerAdapter(List<Status> list, Context context, int x) {
         this.mList = list;
@@ -61,7 +62,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         holder.source.setText(status.getSource());
         holder.screenName.setText(status.getUser().getScreenName());
         holder.weiboLayout.setOnClickListener(new ClickLinsetener(status));
-        mImageViews.add(holder.imageView);
         new GlideLoader().displayCircleImg(mContext, status.getUser().getAvatarLarge(),
                 width / 5, width / 5, holder.imageView);
         if (status.getPicUrls().size() == 0 || status.getPicUrls() == null) {
@@ -93,7 +93,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         public void onClick(View v) {
             Intent intent = new Intent(mContext, WeiboDataActivity.class);
             intent.putExtra("weiboitem", mStatus);
-            mContext.startActivity(intent);
+            ((Activity)mContext).startActivityForResult(intent,1000);
         }
     }
 
@@ -160,9 +160,14 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             for (int i = 0; i < list.size(); i++) {
                 strings[i] = list.get(i).getThumbnailPic();
             }
+            int[] local= new int[2];
             intent.putExtra("pics", strings);
             intent.putExtra("index", position);
-            LogManager.d("index:::", position);
+            intent.putExtra("perWidth",view.getWidth());
+            intent.putExtra("perHeigth",view.getHeight());
+            view.getLocationInWindow(local);
+            LogManager.d("local",local[0]+"+"+local[1]+"+"+view.getWidth()+"+"+view.getHeight());
+            intent.putExtra("local",local);
             mContext.startActivity(intent);
         }
     }

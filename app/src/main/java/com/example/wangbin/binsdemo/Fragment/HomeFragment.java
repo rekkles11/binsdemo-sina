@@ -1,7 +1,9 @@
 package com.example.wangbin.binsdemo.Fragment;
 
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -154,4 +156,6 @@ public class HomeFragment extends Fragment implements UserTimelineCallBack{
         super.onPause();
         mInstance.releasePlayer();
     }
+
+
 }

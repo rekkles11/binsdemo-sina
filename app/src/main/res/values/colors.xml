@@ -41,4 +41,8 @@
     <color name="comment_item_comefrom">#808080</color>
     <color name="comment_item_content">#808080</color>
     <color name="comment_item_top_drive">#f2f2f2</color>
+
+    <color name="alpha">#e0000000</color>
+    <color name="transparent">#0000</color>
+
 </resources>

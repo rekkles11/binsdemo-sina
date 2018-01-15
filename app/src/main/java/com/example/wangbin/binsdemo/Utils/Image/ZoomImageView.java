@@ -820,6 +820,11 @@ public class ZoomImageView extends android.support.v7.widget.AppCompatImageView 
             //如果之前是缩放模式,还需要触发一下缩放结束动画
             if (mPinchMode == PINCH_MODE_SCALE) {
                 scaleEnd();
+                if (mLastMovePoint.y - mScaleCenter.y > 500 || mLastMovePoint.y - mScaleCenter.y < -500) {
+                    if (mOnClickListener != null) {
+                        mOnClickListener.onClick(ZoomImageView.this);
+                    }
+                }
             }
             mPinchMode = PINCH_MODE_FREE;
         } else if (action == MotionEvent.ACTION_POINTER_UP) {
@@ -857,6 +862,7 @@ public class ZoomImageView extends android.support.v7.widget.AppCompatImageView 
             //保存缩放的两个手指
             saveScaleContext(event.getX(0), event.getY(0), event.getX(1), event.getY(1));
         } else if (action == MotionEvent.ACTION_MOVE) {
+
             if (!(mScaleAnimator != null && mScaleAnimator.isRunning())) {
                 //在滚动模式下移动
                 if (mPinchMode == PINCH_MODE_SCROLL) {
@@ -1162,7 +1168,7 @@ public class ZoomImageView extends android.support.v7.widget.AppCompatImageView 
             //清理当前可能正在执行的动画
             cancelAllAnimator();
             //启动矩阵动画
-            mScaleAnimator = new ScaleAnimator(mOuterMatrix, animEnd);
+            mScaleAnimator = new ScaleAnimator(mOuterMatrix, animEnd,300);
             mScaleAnimator.start();
             //清理临时变量
             MathUtils.matrixGiven(animEnd);
@@ -1543,6 +1549,7 @@ public class ZoomImageView extends android.support.v7.widget.AppCompatImageView 
             float y = y1 - y2;
             return (float) Math.sqrt(x * x + y * y);
         }
+
 
         /**
          * 获取两点的中点

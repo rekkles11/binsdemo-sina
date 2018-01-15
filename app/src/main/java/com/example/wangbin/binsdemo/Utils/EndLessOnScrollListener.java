@@ -61,7 +61,6 @@ public abstract class EndLessOnScrollListener extends RecyclerView.OnScrollListe
         firstVisibleItemPostion = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
         lastVisibleItemPosition = ((LinearLayoutManager) layoutManager).findLastVisibleItemPosition();
         View view = layoutManager.findViewByPosition(playPostion);
-
         if (isHome!=null) {
             //判断视频的播放
             if (view != null) {

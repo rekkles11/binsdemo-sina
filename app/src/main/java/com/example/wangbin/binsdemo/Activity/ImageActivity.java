@@ -1,5 +1,6 @@
 package com.example.wangbin.binsdemo.Activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,7 +21,7 @@ import java.util.List;
  * Created by momo on 2017/12/27.
  */
 
-public class ImageActivity extends AppCompatActivity {
+public class ImageActivity extends Activity {
 
     List<PicUrl> mPicUrls = new ArrayList<>();
     ViewPager mViewPager;
@@ -35,7 +36,11 @@ public class ImageActivity extends AppCompatActivity {
 
     private void initView() {
         Intent intent = getIntent();
+        overridePendingTransition(0,0);
         int index = intent.getIntExtra("index",1);
+        int w = intent.getIntExtra("perWidth",1);
+        int h = intent.getIntExtra("perHeigth",1);
+        int[] local = intent.getIntArrayExtra("local");
         String[] path = intent.getStringArrayExtra("pics");
          for (int i =0;i<path.length;i++){
              PicUrl picUrl = new PicUrl();
@@ -52,9 +57,13 @@ public class ImageActivity extends AppCompatActivity {
             mImageViews.add(touchImageView);
         }
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
-        mViewPager.setAdapter(new ImagePageAdapter(mImageViews,ImageActivity.this,mPicUrls));
+        mViewPager.setAdapter(new ImagePageAdapter(mImageViews,ImageActivity.this,mPicUrls,w,h,local));
         mViewPager.setCurrentItem(index);
+    }
 
-
+    @Override
+    protected void onPause() {
+        super.onPause();
+        overridePendingTransition(0,0);
     }
 }

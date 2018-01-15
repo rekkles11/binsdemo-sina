@@ -119,7 +119,7 @@ public class WeiboDataActivity extends AppCompatActivity implements CommentsCall
             }
 
         }
-        ((OriginPicTextHeaderView)mHeaderView).mInstance.getPlayer().setPlayWhenReady(true);
+//        ((OriginPicTextHeaderView)mHeaderView).mInstance.getPlayer().setPlayWhenReady(true);
     }
     public WeiboDataClickLinstener mWeiboDataClickLinstener = new WeiboDataClickLinstener() {
         @Override
@@ -137,6 +137,6 @@ public class WeiboDataActivity extends AppCompatActivity implements CommentsCall
     @Override
     protected void onStop() {
         super.onStop();
-        ((OriginPicTextHeaderView)mHeaderView).mInstance.releasePlayer();
+//        ((OriginPicTextHeaderView)mHeaderView).mInstance.releasePlayer();
     }
 }

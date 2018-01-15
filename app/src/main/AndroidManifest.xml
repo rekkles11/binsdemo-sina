@@ -28,7 +28,8 @@
         <activity android:name=".Activity.FriendsIdsActivity" />
         <activity android:name=".MainActivity"/>
         <activity android:name=".Activity.ShareActivity" />
-        <activity android:name=".Activity.ImageActivity" />
+        <activity android:name=".Activity.ImageActivity"
+            android:theme="@style/myTransparent"/>
         <activity android:name=".Activity.TestActivity" />
         <activity android:name=".Activity.HomeActivity" />
         <activity android:name=".Activity.WeiboDataActivity" />
